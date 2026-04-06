@@ -529,9 +529,17 @@
           autocorrect="off" autocapitalize="words" spellcheck="false"
           autocomplete="off">
 
+        <label class="field-label">Tamaño del cilindro</label>
+        <select id="sel-tamano" class="field-input">
+          <option value="40" selected>Cilindro 40 lb — $116.000</option>
+          <option value="20">Cilindro 20 lb — $55.000</option>
+          <option value="33">Cilindro 33 lb — $112.000</option>
+          <option value="100">Cilindro 100 lb — $272.000</option>
+        </select>
+
         <div class="precio-display">
-          <div class="precio-label">Cilindro 40 lb</div>
-          <div class="precio-valor">$116.000</div>
+          <div class="precio-label" id="precio-label-txt">Cilindro 40 lb</div>
+          <div class="precio-valor" id="precio-valor-txt">$116.000</div>
         </div>
 
         <div id="campo-pago-prestamo" style="display:none">
@@ -634,11 +642,17 @@ const firebaseConfig = {
 const db = getFirestore(initializeApp(firebaseConfig));
 
 const PASSWORD = 'gas2024';
-const PRECIO   = 116000;
+const PRECIOS = {
+  '20':  { label: 'Cilindro 20 lb',  precio: 55000  },
+  '33':  { label: 'Cilindro 33 lb',  precio: 112000 },
+  '40':  { label: 'Cilindro 40 lb',  precio: 116000 },
+  '100': { label: 'Cilindro 100 lb', precio: 272000 }
+};
 
 // ─── STATE ────────────────────────────────────────────────────────────
 let tipoVenta        = 'contado';
 let pagoPrestamo     = true;
+let tamanoActual     = '40';
 let periodoMov       = 'hoy';
 let periodoRes       = 'hoy';
 let cargando         = false;
@@ -748,9 +762,10 @@ async function registrarVenta() {
   mostrarCargando(true);
   try {
     const ref = await addDoc(collection(db,'gas_ventas'), {
-      cliente, precio: PRECIO, tipo: tipoDoc, fecha: serverTimestamp()
+      cliente, precio: PRECIOS[tamanoActual].precio, tamano: tamanoActual, tipo: tipoDoc, fecha: serverTimestamp()
     });
-    cache.ventas.unshift({ id:ref.id, cliente, precio:PRECIO, tipo:tipoDoc, fecha:new Date().toISOString() });
+    const precio = PRECIOS[tamanoActual].precio;
+    cache.ventas.unshift({ id:ref.id, cliente, precio, tamano: tamanoActual, tipo:tipoDoc, fecha:new Date().toISOString() });
     document.getElementById('reg-cliente').value = '';
     const msgs = {
       contado:         '✓ Venta registrada',
@@ -993,7 +1008,7 @@ function renderMovimientos() {
       div.innerHTML = `
         <div class="mov-left">
           <div class="mov-cliente">${esc(m.cliente)}</div>
-          <div class="mov-meta">Cilindro 40lb · ${formatFecha(m.fecha)}</div>
+          <div class="mov-meta">Cilindro ${m.tamano||'40'}lb · ${formatFecha(m.fecha)}</div>
         </div>
         <div class="mov-right">
           <div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div>
@@ -1231,6 +1246,14 @@ document.getElementById('btn-prestamo').addEventListener('click', () => setTipo(
 // Pago préstamo
 document.getElementById('btn-pp-si').addEventListener('click',  () => setPagoPrestamo(true));
 document.getElementById('btn-pp-no').addEventListener('click',  () => setPagoPrestamo(false));
+
+// Selector de tamaño
+document.getElementById('sel-tamano').addEventListener('change', function() {
+  tamanoActual = this.value;
+  const p = PRECIOS[tamanoActual];
+  document.getElementById('precio-label-txt').textContent = p.label;
+  document.getElementById('precio-valor-txt').textContent = '$' + formatNum(p.precio);
+});
 
 // Periodo movimientos
 document.getElementById('periodoMovTabs').addEventListener('click', e => {
