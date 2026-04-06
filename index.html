@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a2744">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%231a2744'/%3E%3Cpolygon points='100,20 170,60 170,140 100,180 30,140 30,60' fill='%23243460'/%3E%3Crect x='82' y='65' width='12' height='70' fill='%23d94f1e'/%3E%3Crect x='82' y='65' width='38' height='12' fill='%23d94f1e'/%3E%3Crect x='82' y='97' width='28' height='11' fill='%23d94f1e'/%3E%3C/svg%3E">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Control de Gas · Ferretería Cristian</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap');
@@ -36,7 +38,7 @@
   #loadingBar {
     display: none; position: fixed; top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, var(--orange), var(--orange-light));
-    z-index: 9999; animation: loadAnim 1s infinite;
+    z-index: 9999; animation: loadAnim 1s infinite; will-change: opacity;
   }
   @keyframes loadAnim { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
@@ -68,14 +70,14 @@
   /* BUTTONS */
   .btn-primary { width: 100%; background: var(--orange); color: white; border: none; border-radius: 10px; padding: 14px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; min-height: 48px; }
   .btn-primary:active { transform: scale(0.98); background: var(--orange-light); }
-  .btn-block { width: 100%; padding: 14px; border: none; border-radius: 10px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; min-height: 48px; }
+  .btn-block { width: 100%; padding: 14px; border: none; border-radius: 10px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: transform 0.15s, opacity 0.15s; min-height: 48px; }
   .btn-block:active { transform: scale(0.98); opacity: 0.9; }
   .btn-orange { background: var(--orange); color: white; }
   .btn-navy   { background: var(--navy);   color: white; }
   .btn-green  { background: var(--green);  color: white; }
   .btn-red    { background: var(--red);    color: white; }
   .btn-blue   { background: var(--blue);   color: white; }
-  .btn-sm { padding: 0 14px; border: none; border-radius: 7px; font-family: 'Barlow Condensed',sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; min-height: 36px; display: inline-flex; align-items: center; }
+  .btn-sm { padding: 0 14px; border: none; border-radius: 7px; font-family: 'Barlow Condensed',sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; min-height: 36px; display: inline-flex; align-items: center; }
   .btn-sm:active { opacity: 0.8; }
   .btn-del { padding: 0 12px; border: none; border-radius: 7px; background: var(--red); color: white; font-family: 'Barlow Condensed',sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; min-height: 36px; min-width: 36px; display: inline-flex; align-items: center; justify-content: center; }
   .btn-del:active { opacity: 0.7; }
@@ -103,6 +105,7 @@
   /* FORM */
   .field-label { font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: block; }
   .field-input, .field-select { width: 100%; padding: 13px 14px; border: 2px solid var(--gray-light); border-radius: 10px; font-family: 'Barlow',sans-serif; color: var(--navy); outline: none; transition: border-color 0.2s; background: var(--white); margin-bottom: 11px; -webkit-appearance: none; appearance: none; }
+  .field-select { padding-right: 36px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892a4' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
   .field-input:focus, .field-select:focus { border-color: var(--orange); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -198,7 +201,7 @@
   .deuda-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .abono-form { background: var(--gray-light); border-radius: 8px; padding: 10px; margin-top: 10px; display: none; gap: 8px; align-items: center; }
   .abono-form.open { display: flex; }
-  .abono-input { flex: 1; padding: 10px 12px; border: 2px solid var(--white); border-radius: 8px; font-family: 'Barlow',sans-serif; color: var(--navy); outline: none; background: white; min-width: 0; }
+  .abono-input { flex: 1; padding: 10px 12px; border: 2px solid var(--white); border-radius: 8px; font-family: 'Barlow',sans-serif; font-size: 16px; color: var(--navy); outline: none; background: white; min-width: 0; -webkit-appearance: none; }
   .abono-input:focus { border-color: var(--orange); }
 
   /* AJUSTE INVENTARIO */
@@ -213,13 +216,14 @@
   .empty-text { font-size: 13px; }
 
   /* TOAST */
-  #toast { position: fixed; bottom: calc(24px + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--navy); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; font-family: 'Barlow',sans-serif; box-shadow: var(--shadow-lg); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 9999; white-space: nowrap; max-width: 90vw; }
+  #toast { position: fixed; bottom: calc(24px + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--navy); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; font-family: 'Barlow',sans-serif; box-shadow: var(--shadow-lg); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 9999; white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis; will-change: transform; }
   #toast.show    { transform: translateX(-50%) translateY(0); }
   #toast.success { background: var(--green); }
   #toast.error   { background: var(--red);   }
 
   /* CONFIRM */
-  .confirm-overlay { position: fixed; inset: 0; background: rgba(26,39,68,0.65); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .confirm-overlay { position: fixed; inset: 0; background: rgba(26,39,68,0.65); z-index: 500; display: flex; align-items: flex-end; justify-content: center; padding: 16px; padding-bottom: calc(16px + var(--safe-bottom)); }
+  @media (min-height: 500px) { .confirm-overlay { align-items: center; padding: 24px; padding-bottom: calc(24px + var(--safe-bottom)); } }
   .confirm-box { background: white; border-radius: 18px; padding: 28px 22px; max-width: 320px; width: 100%; text-align: center; box-shadow: var(--shadow-lg); }
   .confirm-box h3 { font-family: 'Barlow Condensed',sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
   .confirm-box p { font-size: 13px; color: var(--gray); margin-bottom: 20px; line-height: 1.4; }
@@ -414,7 +418,7 @@
 
 <!-- AJUSTE INVENTARIO -->
 <div class="confirm-overlay" id="ajusteOverlay" style="display:none">
-  <div class="confirm-box" style="max-width:380px;">
+  <div class="confirm-box" style="max-width:380px;max-height:85dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
     <h3 style="margin-bottom:16px;">Ajustar inventario</h3>
     <p style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.4;">
       Ingresa el conteo físico actual. Este número es la base desde la que la app calcula.
