@@ -583,6 +583,10 @@
         <button class="periodo-tab" data-periodo="mes">Mes</button>
       </div>
       <div class="inv-row" id="inv-row"></div>
+      <div class="card" style="padding:14px 16px;">
+        <div class="card-title" style="margin-bottom:8px;"><div class="card-title-icon">📦</div>Desglose por tamaño</div>
+        <div id="inv-desglose"></div>
+      </div>
       <div class="stats-grid" id="stats-grid"></div>
 
       <div class="card">
@@ -590,6 +594,13 @@
         <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">
           Registra los cilindros llenos que llegaron y los vacíos que entregaste.
         </p>
+        <label class="field-label">Tamaño de cilindro</label>
+        <select id="entrada-tamano" class="field-input">
+          <option value="40" selected>40 lb</option>
+          <option value="20">20 lb</option>
+          <option value="33">33 lb</option>
+          <option value="100">100 lb</option>
+        </select>
         <label class="field-label">Cilindros llenos recibidos</label>
         <input type="number" id="entrada-llenos" class="field-input"
           placeholder="Ej: 10" min="1" inputmode="numeric" pattern="[0-9]*">
@@ -788,8 +799,9 @@ async function registrarEntrada() {
   if (llenos < 1) { showToast('Ingresa cilindros llenos recibidos','error'); return; }
   mostrarCargando(true);
   try {
-    const ref = await addDoc(collection(db,'gas_entradas'), { llenos, vacios, obs, fecha: serverTimestamp() });
-    cache.entradas.unshift({ id:ref.id, llenos, vacios, obs, fecha:new Date().toISOString() });
+    const tamEnt = document.getElementById('entrada-tamano').value;
+    const ref = await addDoc(collection(db,'gas_entradas'), { llenos, vacios, obs, tamano: tamEnt, fecha: serverTimestamp() });
+    cache.entradas.unshift({ id:ref.id, llenos, vacios, obs, tamano: tamEnt, fecha:new Date().toISOString() });
     document.getElementById('entrada-llenos').value = '';
     document.getElementById('entrada-vacios').value = '';
     document.getElementById('entrada-obs').value    = '';
@@ -902,20 +914,43 @@ function filtrar(items, periodo) {
 }
 
 // ─── CÁLCULOS ─────────────────────────────────────────────────────────
+// ─── INVENTARIO INICIAL (conteo real al arrancar la app) ─────────────
+const INV_INICIAL = {
+  '20':  { llenos: 2, vacios: 2 },
+  '33':  { llenos: 11, vacios: 0 },
+  '40':  { llenos: 5, vacios: 8 },
+  '100': { llenos: 7, vacios: 0 }
+};
+const TAMANOS = ['20','33','40','100'];
+
 function calcInventario() {
-  const llenosRec  = cache.entradas.reduce((s,e) => s + (e.llenos ?? e.cantidad ?? 0), 0);
-  const vaciosEnt  = cache.entradas.reduce((s,e) => s + (e.vacios ?? 0), 0);
-  const normales   = cache.ventas.filter(v => v.tipo==='contado' || v.tipo==='fiado').length;
-  const prestamos  = cache.ventas.filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado').length;
-  const devueltos  = cache.devoluciones.length;
-  // Llenos: recibidos del proveedor - todas las salidas
-  // Vacíos: ventas normales (dejan vacío) + devoluciones de préstamos (devuelven vacío) - entregados al proveedor
-  // Prestados: préstamos activos sin devolver aún
-  return {
-    llenos:    Math.max(0, llenosRec - cache.ventas.length),
-    vacios:    Math.max(0, normales + devueltos - vaciosEnt),
-    prestados: Math.max(0, prestamos - devueltos)
-  };
+  // Por tamaño: llenos iniciales + llenos recibidos - ventas de ese tamaño + devoluciones de ese tamaño
+  // Vacíos por tamaño: vacíos iniciales + ventas normales de ese tamaño + devoluciones de ese tamaño - vacíos entregados al proveedor de ese tamaño
+  const por = {};
+  TAMANOS.forEach(t => {
+    const ini = INV_INICIAL[t] || { llenos:0, vacios:0 };
+    // entradas del proveedor de ese tamaño
+    const llenosRec = cache.entradas.filter(e => (e.tamano||'40') === t).reduce((s,e) => s+(e.llenos??e.cantidad??0), 0);
+    const vaciosEnt = cache.entradas.filter(e => (e.tamano||'40') === t).reduce((s,e) => s+(e.vacios??0), 0);
+    // ventas de ese tamaño
+    const ventasTam = cache.ventas.filter(v => (v.tamano||'40') === t);
+    const normales  = ventasTam.filter(v => v.tipo==='contado'||v.tipo==='fiado').length;
+    const prestamos = ventasTam.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').length;
+    // devoluciones de ese tamaño (guardadas con tamano en el futuro; por ahora sin filtro de tamaño en devoluciones)
+    const devueltos = cache.devoluciones.length > 0
+      ? cache.devoluciones.filter(d => !d.tamano || d.tamano === t).length
+      : 0;
+    por[t] = {
+      llenos:    Math.max(0, ini.llenos + llenosRec - ventasTam.length + devueltos),
+      vacios:    Math.max(0, ini.vacios + normales + devueltos - vaciosEnt),
+      prestados: Math.max(0, prestamos - devueltos)
+    };
+  });
+  // Totales
+  const llenos    = TAMANOS.reduce((s,t) => s + por[t].llenos, 0);
+  const vacios    = TAMANOS.reduce((s,t) => s + por[t].vacios, 0);
+  const prestados = TAMANOS.reduce((s,t) => s + por[t].prestados, 0);
+  return { llenos, vacios, prestados, por };
 }
 
 function calcDeudas() {
@@ -1131,6 +1166,7 @@ function renderResumen() {
   const prestamosCount = ventas
     .filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado').length;
 
+  // Cajitas totales
   document.getElementById('inv-row').innerHTML = `
     <div class="inv-box llenos">
       <div class="inv-num">${inv.llenos}</div>
@@ -1144,6 +1180,22 @@ function renderResumen() {
       <div class="inv-num" style="color:var(--orange)">${inv.prestados}</div>
       <div class="inv-label">🔄 Prestados</div>
     </div>`;
+
+  // Desglose por tamaño
+  const desglose = TAMANOS.map(t => {
+    const p = inv.por[t];
+    const etiquetas = { '20':'20 lb','33':'33 lb','40':'40 lb','100':'100 lb' };
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--gray-light);">
+      <span style="font-weight:600;font-size:14px;color:var(--navy);">${etiquetas[t]}</span>
+      <div style="display:flex;gap:12px;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--green);">🟢 ${p.llenos} llenos</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--blue);">🔵 ${p.vacios} vacíos</span>
+        ${p.prestados > 0 ? `<span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--orange);">🔄 ${p.prestados}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('inv-desglose').innerHTML = desglose;
 
   document.getElementById('stats-grid').innerHTML = `
     <div class="stat-card">
