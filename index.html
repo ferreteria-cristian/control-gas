@@ -744,7 +744,7 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp }
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, deleteDoc, doc }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ─── FIREBASE CONFIG ──────────────────────────────────────────────────
@@ -801,6 +801,27 @@ async function guardarEntrada(entrada) {
 async function guardarAbono(abono) {
   const ref = await addDoc(collection(db, 'gas_abonos'), { ...abono, fecha: serverTimestamp() });
   cache.abonos.unshift({ ...abono, id: ref.id, fecha: new Date().toISOString() });
+}
+
+// ─── ELIMINAR MOVIMIENTO ──────────────────────────────────────────────
+window.pedirEliminar = function(id, coleccion, descripcion) {
+  document.getElementById('confirmMsg').textContent = `¿Eliminar "${descripcion}"? Esta acción no se puede deshacer.`;
+  document.getElementById('confirmBtn').textContent = 'Eliminar';
+  document.getElementById('confirmBtn').onclick = async () => {
+    cerrarConfirm();
+    mostrarCargando(true);
+    try {
+      await deleteDoc(doc(db, coleccion, id));
+      if (coleccion === 'gas_ventas') cache.ventas = cache.ventas.filter(v => v.id !== id);
+      if (coleccion === 'gas_abonos') cache.abonos = cache.abonos.filter(a => a.id !== id);
+      renderMovimientos();
+      renderFiados();
+      renderResumen();
+      showToast('Registro eliminado', 'success');
+    } catch { showToast('Error al eliminar', 'error'); }
+    mostrarCargando(false);
+  };
+  document.getElementById('confirmOverlay').style.display = 'flex';
 }
 
 function mostrarCargando(show) {
@@ -932,11 +953,23 @@ function renderMovimientos() {
   container.innerHTML = todos.map(m => {
     if (m._esAbono) return `<div class="movimiento-item">
       <div class="mov-left"><div class="mov-cliente">${m.cliente}</div><div class="mov-meta">Abono · ${formatFecha(m.fecha)}</div></div>
-      <div class="mov-right"><div class="mov-valor contado">+${formatPeso(m.monto)}</div><span class="badge badge-abono">ABONO</span></div>
+      <div class="mov-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <div class="mov-valor contado">+${formatPeso(m.monto)}</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-abono">ABONO</span>
+          <button class="btn-sm btn-red" style="padding:3px 9px;font-size:11px;" onclick="pedirEliminar('${m.id}','gas_abonos','Abono ${formatPeso(m.monto)} · ${m.cliente}')">✕</button>
+        </div>
+      </div>
     </div>`;
     return `<div class="movimiento-item">
       <div class="mov-left"><div class="mov-cliente">${m.cliente}</div><div class="mov-meta">Cilindro ${m.tamano}lb · ${formatFecha(m.fecha)}</div></div>
-      <div class="mov-right"><div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div><span class="badge badge-${m.tipo}">${m.tipo.toUpperCase()}</span></div>
+      <div class="mov-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-${m.tipo}">${m.tipo.toUpperCase()}</span>
+          <button class="btn-sm btn-red" style="padding:3px 9px;font-size:11px;" onclick="pedirEliminar('${m.id}','gas_ventas','${m.tipo === 'fiado' ? 'Fiado' : 'Venta'} ${formatPeso(m.precio)} · ${m.cliente}')">✕</button>
+        </div>
+      </div>
     </div>`;
   }).join('');
 }
