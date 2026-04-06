@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Gas · Ferretería Cristian</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap');
+
+  :root {
+    --navy: #1a2744;
+    --navy-light: #243460;
+    --orange: #d94f1e;
+    --orange-light: #f05a22;
+    --cream: #faf8f4;
+    --white: #ffffff;
+    --gray: #8892a4;
+    --gray-light: #eef0f5;
+    --green: #1a8c5b;
+    --green-light: #e8f7f1;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --shadow: 0 2px 12px rgba(26,39,68,0.10);
+    --shadow-lg: 0 8px 32px rgba(26,39,68,0.16);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-logo {
+    width: 34px;
+    height: 34px;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .header-title span { color: var(--orange); }
+  .header-user {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+
+  /* LOGIN */
+  #loginScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--navy);
+  }
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+  .login-logo {
+    width: 80px;
+    margin: 0 auto 16px;
+    display: block;
+  }
+  .login-card h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .login-card h1 span { color: var(--orange); }
+  .login-card p {
+    font-size: 14px;
+    color: var(--gray);
+    margin-bottom: 28px;
+  }
+  .login-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    text-align: left;
+    display: block;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .login-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-light);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Barlow', sans-serif;
+    color: var(--navy);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+  }
+  .login-input:focus { border-color: var(--orange); }
+  .login-error {
+    color: var(--red);
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .btn-primary {
+    width: 100%;
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:active { transform: scale(0.98); background: var(--orange-light); }
+
+  /* MAIN APP */
+  #app { display: none; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--white);
+    border-bottom: 2px solid var(--gray-light);
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 90px;
+    padding: 12px 8px 10px;
+    border: none;
+    background: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+
+  /* CONTENT */
+  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  /* FORM FIELDS */
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .field-input, .field-select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid var(--gray-light);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Barlow', sans-serif;
+    color: var(--navy);
+    outline: none;
+    transition: border-color 0.2s;
+    background: var(--white);
+    margin-bottom: 12px;
+    -webkit-appearance: none;
+  }
+  .field-input:focus, .field-select:focus { border-color: var(--orange); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* TOGGLE PAGO */
+  .toggle-pago {
+    display: flex;
+    background: var(--gray-light);
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 12px;
+  }
+  .toggle-pago button {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .toggle-pago button.active-contado {
+    background: var(--green);
+    color: white;
+  }
+  .toggle-pago button.active-fiado {
+    background: var(--orange);
+    color: white;
+  }
+
+  /* PRECIO DISPLAY */
+  .precio-display {
+    background: var(--navy);
+    color: white;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .precio-label { font-size: 12px; opacity: 0.6; font-weight: 500; }
+  .precio-valor {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--orange);
+  }
+
+  /* BUTTONS */
+  .btn-block {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-orange { background: var(--orange); color: white; }
+  .btn-orange:active { background: var(--orange-light); transform: scale(0.98); }
+  .btn-navy { background: var(--navy); color: white; }
+  .btn-navy:active { background: var(--navy-light); transform: scale(0.98); }
+  .btn-sm {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 7px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-green { background: var(--green); color: white; }
+  .btn-red { background: var(--red); color: white; }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .stat-card.full { grid-column: 1 / -1; }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray);
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .stat-value.orange { color: var(--orange); }
+  .stat-value.green { color: var(--green); }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 3px;
+  }
+
+  /* PERIODO TABS */
+  .periodo-tabs {
+    display: flex;
+    background: var(--gray-light);
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 14px;
+  }
+  .periodo-tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .periodo-tab.active {
+    background: var(--navy);
+    color: white;
+  }
+
+  /* LISTA MOVIMIENTOS */
+  .movimiento-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .movimiento-item:last-child { border-bottom: none; }
+  .mov-left {}
+  .mov-cliente {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--navy);
+  }
+  .mov-meta {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+  .mov-right { text-align: right; }
+  .mov-valor {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .mov-valor.contado { color: var(--green); }
+  .mov-valor.fiado { color: var(--orange); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .badge-contado { background: var(--green-light); color: var(--green); }
+  .badge-fiado { background: #fff3ed; color: var(--orange); }
+  .badge-abono { background: #e8f0ff; color: var(--navy); }
+
+  /* FIADOS LIST */
+  .fiado-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .fiado-item:last-child { border-bottom: none; }
+  .fiado-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .fiado-nombre {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--navy);
+  }
+  .fiado-saldo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--orange);
+  }
+  .fiado-detail {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .fiado-actions { display: flex; gap: 8px; }
+  .abono-form {
+    background: var(--gray-light);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    display: none;
+  }
+  .abono-form.open { display: flex; gap: 8px; align-items: center; }
+  .abono-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--gray-light);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Barlow', sans-serif;
+    color: var(--navy);
+    outline: none;
+    background: white;
+  }
+  .abono-input:focus { border-color: var(--orange); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 10px; }
+  .empty-text { font-size: 14px; }
+
+  /* SUCCESS TOAST */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Barlow', sans-serif;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.success { background: var(--green); }
+  #toast.error { background: var(--red); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray);
+    margin: 18px 0 8px;
+  }
+
+  /* LOADING BAR */
+  #loadingBar {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--orange), var(--orange-light));
+    z-index: 999;
+    animation: loadingAnim 1s infinite;
+  }
+  @keyframes loadingAnim {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+  }
+
+  /* DELETE confirm */
+  .confirm-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,39,68,0.6);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .confirm-box {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 24px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+  }
+  .confirm-box h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .confirm-box p { font-size: 14px; color: var(--gray); margin-bottom: 20px; }
+  .confirm-btns { display: flex; gap: 10px; }
+  .confirm-btns button { flex: 1; }
+
+  /* Logout */
+  .logout-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    padding: 4px 8px;
+  }
+  .logout-btn:hover { color: white; }
+</style>
+</head>
+<body>
+
+<div id="loadingBar"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <!-- Logo SVG inline (basado en Ferretería Cristian) -->
+    <svg class="login-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" fill="#1a2744"/>
+      <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" fill="none" stroke="#1a2744" stroke-width="4"/>
+      <!-- F shape orange -->
+      <rect x="78" y="62" width="14" height="76" fill="#d94f1e"/>
+      <rect x="78" y="62" width="44" height="14" fill="#d94f1e"/>
+      <rect x="78" y="96" width="34" height="13" fill="#d94f1e"/>
+    </svg>
+    <h1>FERRETERÍA <span>CRISTIAN</span></h1>
+    <p>Control de Gas · Acceso administrativo</p>
+    <label class="login-label">Contraseña</label>
+    <input type="password" id="passInput" class="login-input" placeholder="••••••••"
+      autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <div class="login-error" id="loginError">Contraseña incorrecta</div>
+    <button class="btn-primary" onclick="doLogin()">INGRESAR</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="header-brand">
+      <svg class="header-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" fill="#243460"/>
+        <rect x="78" y="62" width="12" height="76" fill="#d94f1e"/>
+        <rect x="78" y="62" width="42" height="12" fill="#d94f1e"/>
+        <rect x="78" y="96" width="32" height="11" fill="#d94f1e"/>
+      </svg>
+      <div>
+        <div class="header-title">CONTROL <span>GAS</span></div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Salir</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('registrar')">🔥 Registrar</button>
+    <button class="tab" onclick="showTab('movimientos')">📋 Movimientos</button>
+    <button class="tab" onclick="showTab('fiados')">💳 Fiados</button>
+    <button class="tab" onclick="showTab('resumen')">📊 Resumen</button>
+  </div>
+
+  <div class="content">
+
+    <!-- REGISTRAR -->
+    <div class="screen active" id="screen-registrar">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">🔥</div>
+          Nueva salida de gas
+        </div>
+
+        <label class="field-label">Tamaño del cilindro</label>
+        <select class="field-select" id="reg-tamano" onchange="actualizarPrecio()">
+          <option value="40">Cilindro 40 lb</option>
+        </select>
+
+        <label class="field-label">Tipo de venta</label>
+        <div class="toggle-pago">
+          <button id="btn-contado" class="active-contado" onclick="setTipo('contado')">✓ Contado</button>
+          <button id="btn-fiado" onclick="setTipo('fiado')">⏳ Fiado</button>
+        </div>
+
+        <label class="field-label">Cliente / Nombre</label>
+        <input type="text" id="reg-cliente" class="field-input" placeholder="Nombre del cliente"
+          autocorrect="off" autocapitalize="words" spellcheck="false">
+
+        <div class="precio-display">
+          <div>
+            <div class="precio-label">Valor cilindro 40 lb</div>
+          </div>
+          <div class="precio-valor" id="precioDisplay">$116.000</div>
+        </div>
+
+        <button class="btn-block btn-orange" onclick="registrarVenta()">REGISTRAR SALIDA</button>
+      </div>
+    </div>
+
+    <!-- MOVIMIENTOS -->
+    <div class="screen" id="screen-movimientos">
+      <div class="periodo-tabs">
+        <button class="periodo-tab active" onclick="setPeriodo('hoy', this)">Hoy</button>
+        <button class="periodo-tab" onclick="setPeriodo('semana', this)">Semana</button>
+        <button class="periodo-tab" onclick="setPeriodo('mes', this)">Mes</button>
+        <button class="periodo-tab" onclick="setPeriodo('todos', this)">Todo</button>
+      </div>
+      <div id="lista-movimientos"></div>
+    </div>
+
+    <!-- FIADOS -->
+    <div class="screen" id="screen-fiados">
+      <div id="lista-fiados"></div>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="screen" id="screen-resumen">
+      <div class="periodo-tabs">
+        <button class="periodo-tab active" onclick="setResumenPeriodo('hoy', this)">Hoy</button>
+        <button class="periodo-tab" onclick="setResumenPeriodo('semana', this)">Semana</button>
+        <button class="periodo-tab" onclick="setResumenPeriodo('mes', this)">Mes</button>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">📦</div>
+          Registro de entrada
+        </div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">¿Llegó cilindros del proveedor? Regístralo aquí.</p>
+        <label class="field-label">Cantidad de cilindros recibidos</label>
+        <input type="number" id="entrada-cant" class="field-input" placeholder="Ej: 10" min="1">
+        <label class="field-label">Observación (opcional)</label>
+        <input type="text" id="entrada-obs" class="field-input" placeholder="Proveedor, factura...">
+        <button class="btn-block btn-navy" onclick="registrarEntrada()">REGISTRAR ENTRADA</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">🗑️</div>
+          Zona de datos
+        </div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">Borrar todos los datos guardados en este dispositivo.</p>
+        <button class="btn-block btn-sm btn-red" onclick="confirmarBorrar()">Borrar todos los datos</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- CONFIRM DELETE -->
+<div class="confirm-overlay" id="confirmOverlay" style="display:none">
+  <div class="confirm-box">
+    <h3>¿Borrar todo?</h3>
+    <p id="confirmMsg">Esta acción no se puede deshacer.</p>
+    <div class="confirm-btns">
+      <button class="btn-block btn-sm" style="background:var(--gray-light);color:var(--navy);font-family:'Barlow Condensed',sans-serif;font-weight:700;border:none;border-radius:8px;padding:11px;cursor:pointer;" onclick="cerrarConfirm()">Cancelar</button>
+      <button class="btn-block btn-sm btn-red" id="confirmBtn" style="border-radius:8px;padding:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700;" onclick="">Borrar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+// ─── FIREBASE CONFIG ──────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDlSd08Ao02WgdFANiKBV3XAKqFkZz1qIA",
+  authDomain: "gastos-ferreteria.firebaseapp.com",
+  projectId: "gastos-ferreteria",
+  storageBucket: "gastos-ferreteria.firebasestorage.app",
+  messagingSenderId: "198825830729",
+  appId: "1:198825830729:web:1ed10370fb4f829d841298"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+// ─── CONFIG ───────────────────────────────────────────────────────────
+const PASSWORD = 'gas2024';
+const PRECIOS = { '40': 116000 };
+
+// ─── STATE ────────────────────────────────────────────────────────────
+let tipoVenta = 'contado';
+let periodoMovimientos = 'hoy';
+let periodoResumen = 'hoy';
+let pendingConfirmFn = null;
+let cache = { ventas: [], entradas: [], abonos: [] };
+let cargando = false;
+
+// ─── FIRESTORE HELPERS ────────────────────────────────────────────────
+async function cargarDatos() {
+  mostrarCargando(true);
+  try {
+    const [ventasSnap, entradasSnap, abonosSnap] = await Promise.all([
+      getDocs(query(collection(db, 'gas_ventas'), orderBy('fecha', 'desc'))),
+      getDocs(query(collection(db, 'gas_entradas'), orderBy('fecha', 'desc'))),
+      getDocs(query(collection(db, 'gas_abonos'), orderBy('fecha', 'desc')))
+    ]);
+    cache.ventas   = ventasSnap.docs.map(d => ({ id: d.id, ...d.data(), fecha: d.data().fecha?.toDate?.()?.toISOString() || d.data().fecha }));
+    cache.entradas = entradasSnap.docs.map(d => ({ id: d.id, ...d.data(), fecha: d.data().fecha?.toDate?.()?.toISOString() || d.data().fecha }));
+    cache.abonos   = abonosSnap.docs.map(d => ({ id: d.id, ...d.data(), fecha: d.data().fecha?.toDate?.()?.toISOString() || d.data().fecha }));
+  } catch (e) {
+    showToast('Error cargando datos', 'error');
+    console.error(e);
+  }
+  mostrarCargando(false);
+}
+
+async function guardarVenta(venta) {
+  const ref = await addDoc(collection(db, 'gas_ventas'), { ...venta, fecha: serverTimestamp() });
+  cache.ventas.unshift({ ...venta, id: ref.id, fecha: new Date().toISOString() });
+}
+async function guardarEntrada(entrada) {
+  const ref = await addDoc(collection(db, 'gas_entradas'), { ...entrada, fecha: serverTimestamp() });
+  cache.entradas.unshift({ ...entrada, id: ref.id, fecha: new Date().toISOString() });
+}
+async function guardarAbono(abono) {
+  const ref = await addDoc(collection(db, 'gas_abonos'), { ...abono, fecha: serverTimestamp() });
+  cache.abonos.unshift({ ...abono, id: ref.id, fecha: new Date().toISOString() });
+}
+
+function mostrarCargando(show) {
+  cargando = show;
+  document.getElementById('loadingBar').style.display = show ? 'block' : 'none';
+}
+
+// ─── LOGIN ────────────────────────────────────────────────────────────
+window.doLogin = async function() {
+  const pass = document.getElementById('passInput').value;
+  if (pass === PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    await cargarDatos();
+    renderMovimientos();
+    renderFiados();
+    renderResumen();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('passInput').value = '';
+  }
+}
+window.logout = function() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('passInput').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  cache = { ventas: [], entradas: [], abonos: [] };
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────
+window.showTab = function(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'movimientos') renderMovimientos();
+  if (name === 'fiados') renderFiados();
+  if (name === 'resumen') renderResumen();
+}
+
+// ─── TIPO VENTA ───────────────────────────────────────────────────────
+window.setTipo = function(tipo) {
+  tipoVenta = tipo;
+  document.getElementById('btn-contado').className = tipo === 'contado' ? 'active-contado' : '';
+  document.getElementById('btn-fiado').className = tipo === 'fiado' ? 'active-fiado' : '';
+}
+window.actualizarPrecio = function() {
+  const tam = document.getElementById('reg-tamano').value;
+  document.getElementById('precioDisplay').textContent = '$' + formatNum(PRECIOS[tam] || 0);
+}
+
+// ─── REGISTRAR VENTA ──────────────────────────────────────────────────
+window.registrarVenta = async function() {
+  if (cargando) return;
+  const cliente = document.getElementById('reg-cliente').value.trim();
+  const tamano = document.getElementById('reg-tamano').value;
+  if (!cliente) { showToast('Ingresa el nombre del cliente', 'error'); return; }
+  const precio = PRECIOS[tamano];
+  mostrarCargando(true);
+  try {
+    await guardarVenta({ cliente, tamano, precio, tipo: tipoVenta });
+    document.getElementById('reg-cliente').value = '';
+    showToast(tipoVenta === 'contado' ? '✓ Venta registrada' : '✓ Fiado registrado', 'success');
+    renderMovimientos();
+    renderFiados();
+    renderResumen();
+  } catch { showToast('Error al guardar', 'error'); }
+  mostrarCargando(false);
+}
+
+// ─── REGISTRAR ENTRADA ────────────────────────────────────────────────
+window.registrarEntrada = async function() {
+  if (cargando) return;
+  const cant = parseInt(document.getElementById('entrada-cant').value);
+  const obs = document.getElementById('entrada-obs').value.trim();
+  if (!cant || cant < 1) { showToast('Ingresa la cantidad', 'error'); return; }
+  mostrarCargando(true);
+  try {
+    await guardarEntrada({ cantidad: cant, obs });
+    document.getElementById('entrada-cant').value = '';
+    document.getElementById('entrada-obs').value = '';
+    showToast(`✓ ${cant} cilindro(s) registrado(s)`, 'success');
+    renderResumen();
+  } catch { showToast('Error al guardar', 'error'); }
+  mostrarCargando(false);
+}
+
+// ─── FILTROS ──────────────────────────────────────────────────────────
+function filtrarPorPeriodo(items, periodo) {
+  const ahora = new Date();
+  return items.filter(v => {
+    const fecha = new Date(v.fecha);
+    if (periodo === 'hoy') return fecha.toDateString() === ahora.toDateString();
+    if (periodo === 'semana') {
+      const lunes = new Date(ahora);
+      lunes.setDate(ahora.getDate() - ahora.getDay() + (ahora.getDay() === 0 ? -6 : 1));
+      lunes.setHours(0,0,0,0);
+      return fecha >= lunes;
+    }
+    if (periodo === 'mes') return fecha.getMonth() === ahora.getMonth() && fecha.getFullYear() === ahora.getFullYear();
+    return true;
+  });
+}
+window.setPeriodo = function(p, el) {
+  periodoMovimientos = p;
+  document.querySelectorAll('#screen-movimientos .periodo-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderMovimientos();
+}
+window.setResumenPeriodo = function(p, el) {
+  periodoResumen = p;
+  document.querySelectorAll('#screen-resumen .periodo-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderResumen();
+}
+
+// ─── RENDER MOVIMIENTOS ───────────────────────────────────────────────
+function renderMovimientos() {
+  const container = document.getElementById('lista-movimientos');
+  const ventas = filtrarPorPeriodo(cache.ventas, periodoMovimientos);
+  const abonos = filtrarPorPeriodo(cache.abonos, periodoMovimientos).map(a => ({...a, _esAbono: true}));
+  const todos = [...ventas, ...abonos].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+  if (!todos.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Sin movimientos en este período</div></div>`;
+    return;
+  }
+  container.innerHTML = todos.map(m => {
+    if (m._esAbono) return `<div class="movimiento-item">
+      <div class="mov-left"><div class="mov-cliente">${m.cliente}</div><div class="mov-meta">Abono · ${formatFecha(m.fecha)}</div></div>
+      <div class="mov-right"><div class="mov-valor contado">+${formatPeso(m.monto)}</div><span class="badge badge-abono">ABONO</span></div>
+    </div>`;
+    return `<div class="movimiento-item">
+      <div class="mov-left"><div class="mov-cliente">${m.cliente}</div><div class="mov-meta">Cilindro ${m.tamano}lb · ${formatFecha(m.fecha)}</div></div>
+      <div class="mov-right"><div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div><span class="badge badge-${m.tipo}">${m.tipo.toUpperCase()}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER FIADOS ────────────────────────────────────────────────────
+function renderFiados() {
+  const container = document.getElementById('lista-fiados');
+  const clientes = {};
+  cache.ventas.filter(v => v.tipo === 'fiado').forEach(v => {
+    if (!clientes[v.cliente]) clientes[v.cliente] = { nombre: v.cliente, total: 0, saldo: 0, cargas: 0 };
+    clientes[v.cliente].total += v.precio;
+    clientes[v.cliente].saldo += v.precio;
+    clientes[v.cliente].cargas++;
+  });
+  cache.abonos.forEach(a => { if (clientes[a.cliente]) clientes[a.cliente].saldo -= a.monto; });
+  const activos = Object.values(clientes).filter(c => c.saldo > 0);
+
+  if (!activos.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No hay fiados pendientes</div></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="card">
+    <div class="card-title"><div class="card-title-icon">💳</div>Clientes con saldo</div>
+    ${activos.map(c => `
+      <div class="fiado-item">
+        <div class="fiado-top">
+          <div class="fiado-nombre">${c.nombre}</div>
+          <div class="fiado-saldo">${formatPeso(c.saldo)}</div>
+        </div>
+        <div class="fiado-detail">${c.cargas} carga(s) · Total fiado: ${formatPeso(c.total)}</div>
+        <div class="fiado-actions">
+          <button class="btn-sm btn-green" onclick="toggleAbono('${c.nombre}')">+ Abonar</button>
+          <button class="btn-sm" style="background:var(--gray-light);color:var(--navy);" onclick="verHistorial('${c.nombre}')">Historial</button>
+        </div>
+        <div class="abono-form" id="abono-${CSS.escape(c.nombre)}">
+          <input type="number" class="abono-input" id="monto-${CSS.escape(c.nombre)}" placeholder="Valor abono" min="1">
+          <button class="btn-sm btn-orange" onclick="registrarAbono('${c.nombre}', ${c.saldo})">OK</button>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+window.toggleAbono = function(nombre) {
+  const form = document.getElementById('abono-' + CSS.escape(nombre));
+  if (form) { const open = form.classList.toggle('open'); if (open) document.getElementById('monto-' + CSS.escape(nombre))?.focus(); }
+}
+window.registrarAbono = async function(cliente, saldoActual) {
+  if (cargando) return;
+  const input = document.getElementById('monto-' + CSS.escape(cliente));
+  const monto = parseInt(input?.value);
+  if (!monto || monto <= 0) { showToast('Ingresa un valor válido', 'error'); return; }
+  if (monto > saldoActual) { showToast('El abono supera el saldo', 'error'); return; }
+  mostrarCargando(true);
+  try {
+    await guardarAbono({ cliente, monto });
+    showToast('✓ Abono registrado', 'success');
+    renderFiados();
+    renderMovimientos();
+  } catch { showToast('Error al guardar', 'error'); }
+  mostrarCargando(false);
+}
+window.verHistorial = function(nombre) {
+  const ventas = cache.ventas.filter(v => v.cliente === nombre && v.tipo === 'fiado');
+  const abonos = cache.abonos.filter(a => a.cliente === nombre);
+  let msg = `Historial de ${nombre}:\n\nCargas:\n`;
+  ventas.forEach(v => msg += `  ${formatFechaCorta(v.fecha)}: ${formatPeso(v.precio)}\n`);
+  if (abonos.length) { msg += `\nAbonos:\n`; abonos.forEach(a => msg += `  ${formatFechaCorta(a.fecha)}: ${formatPeso(a.monto)}\n`); }
+  alert(msg);
+}
+
+// ─── RENDER RESUMEN ───────────────────────────────────────────────────
+function renderResumen() {
+  const ventas = filtrarPorPeriodo(cache.ventas, periodoResumen);
+  const abonos = filtrarPorPeriodo(cache.abonos, periodoResumen);
+  const totalContado = ventas.filter(v => v.tipo === 'contado').reduce((s,v) => s+v.precio, 0);
+  const totalAbonos  = abonos.reduce((s,a) => s+a.monto, 0);
+  const saldoFiadoTotal = (() => {
+    const cl = {};
+    cache.ventas.filter(v => v.tipo==='fiado').forEach(v => { cl[v.cliente] = (cl[v.cliente]||0)+v.precio; });
+    cache.abonos.forEach(a => { cl[a.cliente] = (cl[a.cliente]||0)-a.monto; });
+    return Object.values(cl).filter(s=>s>0).reduce((a,b)=>a+b,0);
+  })();
+  const totalEntradas = cache.entradas.reduce((s,e)=>s+e.cantidad,0);
+  const inventario = totalEntradas - cache.ventas.length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Cilindros vendidos</div>
+      <div class="stat-value">${ventas.length}</div>
+      <div class="stat-sub">${ventas.filter(v=>v.tipo==='contado').length} contado · ${ventas.filter(v=>v.tipo==='fiado').length} fiado</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Inventario actual</div>
+      <div class="stat-value ${inventario < 0 ? 'orange' : ''}">${inventario}</div>
+      <div class="stat-sub">${totalEntradas} entradas · ${cache.ventas.length} salidas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Recaudado</div>
+      <div class="stat-value green">${formatPeso(totalContado + totalAbonos)}</div>
+      <div class="stat-sub">Contado + abonos del período</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fiado pendiente</div>
+      <div class="stat-value orange">${formatPeso(saldoFiadoTotal)}</div>
+      <div class="stat-sub">Saldo histórico total</div>
+    </div>
+  `;
+}
+
+// ─── CONFIRM BORRAR ───────────────────────────────────────────────────
+window.confirmarBorrar = function() {
+  // Solo borra cache local, los datos en Firestore se mantienen
+  document.getElementById('confirmMsg').textContent = 'Se recargará la información desde la nube.';
+  pendingConfirmFn = async () => {
+    cerrarConfirm();
+    await cargarDatos();
+    renderMovimientos(); renderFiados(); renderResumen();
+    showToast('Datos recargados', 'success');
+  };
+  document.getElementById('confirmBtn').textContent = 'Recargar';
+  document.getElementById('confirmBtn').onclick = pendingConfirmFn;
+  document.getElementById('confirmOverlay').style.display = 'flex';
+}
+window.cerrarConfirm = function() {
+  document.getElementById('confirmOverlay').style.display = 'none';
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────
+function formatNum(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function formatPeso(n) { return '$' + formatNum(n); }
+function formatFecha(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-CO', { day:'2-digit', month:'short' }) + ' ' +
+    d.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+}
+function formatFechaCorta(iso) {
+  return new Date(iso).toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'2-digit' });
+}
+let toastTimer;
+window.showToast = function(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
+}
+
+// Enter en login
+document.getElementById('passInput').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
