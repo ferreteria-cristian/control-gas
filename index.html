@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a2744">
 <title>Control de Gas · Ferretería Cristian</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap');
@@ -12,581 +15,447 @@
     --navy-light: #243460;
     --orange: #d94f1e;
     --orange-light: #f05a22;
-    --cream: #faf8f4;
+    --cream: #f5f3ef;
     --white: #ffffff;
     --gray: #8892a4;
     --gray-light: #eef0f5;
     --green: #1a8c5b;
     --green-light: #e8f7f1;
     --red: #c0392b;
-    --red-light: #fdecea;
+    --blue: #1a5fa8;
+    --blue-light: #e8f0ff;
     --shadow: 0 2px 12px rgba(26,39,68,0.10);
     --shadow-lg: 0 8px 32px rgba(26,39,68,0.16);
+    /* Safe area para notch iPhone */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ── RESET & BASE ─────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { height: 100%; }
 
   body {
     font-family: 'Barlow', sans-serif;
     background: var(--cream);
     color: var(--navy);
-    min-height: 100vh;
+    min-height: 100%;
+    min-height: 100dvh;
+    /* Evitar bounce scroll en iOS */
+    overscroll-behavior: none;
+    /* Quitar delay táctil en Android/iOS */
+    touch-action: manipulation;
+    /* Quitar highlight azul en tap */
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* HEADER */
+  /* Evitar zoom al hacer focus en inputs iOS */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* ── LOADING BAR ─────────────────────────────────────────────── */
+  #loadingBar {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--orange), var(--orange-light));
+    z-index: 9999;
+    animation: loadingAnim 1s infinite;
+  }
+  @keyframes loadingAnim { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── HEADER ──────────────────────────────────────────────────── */
   header {
     background: var(--navy);
     padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    padding-top: var(--safe-top);
+    display: flex; align-items: center; justify-content: space-between;
+    height: calc(56px + var(--safe-top));
+    position: sticky; top: 0; z-index: 100;
     box-shadow: var(--shadow-lg);
   }
-  .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .header-logo {
-    width: 34px;
-    height: 34px;
-  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-logo { width: 34px; height: 34px; flex-shrink: 0; }
   .header-title {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--white);
-    letter-spacing: 0.5px;
-    line-height: 1.1;
+    font-size: 18px; font-weight: 800;
+    color: var(--white); letter-spacing: 0.5px;
   }
   .header-title span { color: var(--orange); }
-  .header-user {
-    font-size: 13px;
-    color: rgba(255,255,255,0.6);
-    font-weight: 500;
+  .logout-btn {
+    background: none; border: none;
+    color: rgba(255,255,255,0.55);
+    font-size: 13px; font-family: 'Barlow', sans-serif;
+    padding: 8px 10px; cursor: pointer;
+    min-height: 44px; /* Área táctil mínima */
+    display: flex; align-items: center;
   }
 
-  /* LOGIN */
+  /* ── LOGIN ───────────────────────────────────────────────────── */
   #loginScreen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
     padding: 24px;
+    padding-top: calc(24px + var(--safe-top));
+    padding-bottom: calc(24px + var(--safe-bottom));
     background: var(--navy);
   }
   .login-card {
-    background: var(--white);
-    border-radius: 20px;
-    padding: 40px 32px;
-    width: 100%;
-    max-width: 360px;
-    box-shadow: var(--shadow-lg);
-    text-align: center;
+    background: var(--white); border-radius: 20px;
+    padding: 40px 28px; width: 100%; max-width: 360px;
+    box-shadow: var(--shadow-lg); text-align: center;
   }
-  .login-logo {
-    width: 80px;
-    margin: 0 auto 16px;
-    display: block;
-  }
+  .login-logo { width: 80px; margin: 0 auto 16px; display: block; }
   .login-card h1 {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--navy);
-    margin-bottom: 4px;
+    font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 4px;
   }
   .login-card h1 span { color: var(--orange); }
-  .login-card p {
-    font-size: 14px;
-    color: var(--gray);
-    margin-bottom: 28px;
-  }
+  .login-card p { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
   .login-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--navy);
-    text-align: left;
-    display: block;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 12px; font-weight: 600; color: var(--navy);
+    text-align: left; display: block; margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
   }
   .login-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid var(--gray-light);
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: 'Barlow', sans-serif;
-    color: var(--navy);
-    outline: none;
-    transition: border-color 0.2s;
-    margin-bottom: 16px;
+    width: 100%; padding: 13px 16px;
+    border: 2px solid var(--gray-light); border-radius: 10px;
+    font-family: 'Barlow', sans-serif; color: var(--navy);
+    outline: none; transition: border-color 0.2s; margin-bottom: 16px;
+    background: var(--white);
+    /* iOS: evitar auto-zoom (font-size ya es 16px por regla global) */
+    -webkit-appearance: none;
   }
   .login-input:focus { border-color: var(--orange); }
-  .login-error {
-    color: var(--red);
-    font-size: 13px;
-    margin-bottom: 12px;
-    display: none;
-  }
+  .login-error { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; }
   .btn-primary {
-    width: 100%;
-    background: var(--orange);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 13px;
-    font-size: 15px;
-    font-weight: 700;
+    width: 100%; background: var(--orange); color: white;
+    border: none; border-radius: 10px; padding: 14px;
     font-family: 'Barlow Condensed', sans-serif;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    font-size: 16px; font-weight: 700; letter-spacing: 0.5px;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+    min-height: 48px;
   }
   .btn-primary:active { transform: scale(0.98); background: var(--orange-light); }
 
-  /* MAIN APP */
+  /* ── APP ─────────────────────────────────────────────────────── */
   #app { display: none; }
 
-  /* TABS */
+  /* ── TABS ────────────────────────────────────────────────────── */
   .tabs {
     display: flex;
     background: var(--white);
     border-bottom: 2px solid var(--gray-light);
     position: sticky;
-    top: 56px;
+    top: calc(56px + var(--safe-top));
     z-index: 90;
     overflow-x: auto;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
   .tabs::-webkit-scrollbar { display: none; }
   .tab {
-    flex: 1;
-    min-width: 90px;
-    padding: 12px 8px 10px;
-    border: none;
-    background: none;
+    flex: 1; min-width: 72px;
+    padding: 12px 5px 10px;
+    border: none; background: none;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--gray);
+    font-size: 11px; font-weight: 700; color: var(--gray);
     cursor: pointer;
     border-bottom: 3px solid transparent;
     transition: color 0.2s, border-color 0.2s;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    white-space: nowrap;
+    text-transform: uppercase; white-space: nowrap;
+    min-height: 44px; /* Área táctil mínima iOS */
   }
-  .tab.active {
-    color: var(--orange);
-    border-bottom-color: var(--orange);
-  }
+  .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
 
-  /* CONTENT */
-  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+  /* ── CONTENT ─────────────────────────────────────────────────── */
+  .content {
+    padding: 14px;
+    padding-bottom: calc(24px + var(--safe-bottom));
+    max-width: 600px; margin: 0 auto;
+  }
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* CARDS */
+  /* ── CARDS ───────────────────────────────────────────────────── */
   .card {
-    background: var(--white);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow);
+    background: var(--white); border-radius: 14px;
+    padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow);
   }
   .card-title {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--navy);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 15px; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
   }
   .card-title-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 26px; height: 26px; border-radius: 7px;
     background: var(--navy);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+    flex-shrink: 0;
   }
 
-  /* FORM FIELDS */
+  /* ── FORM ────────────────────────────────────────────────────── */
   .field-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 11px; font-weight: 600; color: var(--gray);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 5px; display: block;
   }
   .field-input, .field-select {
-    width: 100%;
-    padding: 11px 14px;
-    border: 2px solid var(--gray-light);
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: 'Barlow', sans-serif;
-    color: var(--navy);
-    outline: none;
-    transition: border-color 0.2s;
-    background: var(--white);
-    margin-bottom: 12px;
-    -webkit-appearance: none;
+    width: 100%; padding: 13px 14px;
+    border: 2px solid var(--gray-light); border-radius: 10px;
+    font-family: 'Barlow', sans-serif; color: var(--navy);
+    outline: none; transition: border-color 0.2s;
+    background: var(--white); margin-bottom: 11px;
+    -webkit-appearance: none; appearance: none;
   }
   .field-input:focus, .field-select:focus { border-color: var(--orange); }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-  /* TOGGLE PAGO */
-  .toggle-pago {
-    display: flex;
-    background: var(--gray-light);
-    border-radius: 10px;
-    padding: 3px;
-    margin-bottom: 12px;
+  /* ── TIPO TOGGLE ─────────────────────────────────────────────── */
+  .tipo-toggle {
+    display: flex; background: var(--gray-light);
+    border-radius: 10px; padding: 3px; margin-bottom: 12px; gap: 2px;
   }
-  .toggle-pago button {
-    flex: 1;
-    padding: 9px;
-    border: none;
-    border-radius: 8px;
-    background: none;
+  .tipo-toggle button {
+    flex: 1; padding: 10px 4px;
+    border: none; border-radius: 8px; background: none;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--gray);
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
+    font-size: 12px; font-weight: 700; color: var(--gray);
+    cursor: pointer; transition: all 0.2s; line-height: 1.3;
+    min-height: 52px;
   }
-  .toggle-pago button.active-contado {
-    background: var(--green);
-    color: white;
-  }
-  .toggle-pago button.active-fiado {
-    background: var(--orange);
-    color: white;
-  }
+  .tipo-toggle button.t-contado { background: var(--green); color: white; }
+  .tipo-toggle button.t-fiado   { background: var(--orange); color: white; }
+  .tipo-toggle button.t-prestamo{ background: var(--blue); color: white; }
 
-  /* PRECIO DISPLAY */
+  /* ── PRECIO DISPLAY ──────────────────────────────────────────── */
   .precio-display {
-    background: var(--navy);
-    color: white;
-    border-radius: 10px;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+    background: var(--navy); color: white; border-radius: 10px;
+    padding: 12px 16px; display: flex;
+    justify-content: space-between; align-items: center; margin-bottom: 14px;
   }
-  .precio-label { font-size: 12px; opacity: 0.6; font-weight: 500; }
+  .precio-label { font-size: 12px; opacity: 0.6; }
   .precio-valor {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--orange);
+    font-size: 22px; font-weight: 800; color: var(--orange);
   }
 
-  /* BUTTONS */
+  /* ── INFO BOX ────────────────────────────────────────────────── */
+  .info-box {
+    border-radius: 8px; padding: 10px 12px;
+    font-size: 12px; margin-bottom: 12px; line-height: 1.5; font-weight: 500;
+  }
+  .info-box.blue   { background: var(--blue-light);  color: var(--blue); }
+  .info-box.orange { background: #fff3ed; color: var(--orange); }
+  .info-box.green  { background: var(--green-light); color: var(--green); }
+
+  /* ── BUTTONS ─────────────────────────────────────────────────── */
   .btn-block {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 10px;
+    width: 100%; padding: 14px; border: none; border-radius: 10px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.2s;
+    font-size: 16px; font-weight: 700; letter-spacing: 0.5px;
+    cursor: pointer; transition: all 0.15s;
+    min-height: 48px;
   }
+  .btn-block:active { transform: scale(0.98); opacity: 0.9; }
   .btn-orange { background: var(--orange); color: white; }
-  .btn-orange:active { background: var(--orange-light); transform: scale(0.98); }
-  .btn-navy { background: var(--navy); color: white; }
-  .btn-navy:active { background: var(--navy-light); transform: scale(0.98); }
+  .btn-navy   { background: var(--navy);   color: white; }
+  /* Botones pequeños — área táctil mínima 44px */
   .btn-sm {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 7px;
+    padding: 0 14px; border: none; border-radius: 7px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    min-height: 36px; display: inline-flex; align-items: center;
   }
+  .btn-sm:active { opacity: 0.8; }
   .btn-green { background: var(--green); color: white; }
-  .btn-red { background: var(--red); color: white; }
+  .btn-red   { background: var(--red);   color: white; }
+  .btn-blue  { background: var(--blue);  color: white; }
+  /* Botón ✕ eliminar — área táctil ampliada */
+  .btn-del {
+    padding: 0 12px; border: none; border-radius: 7px;
+    background: var(--red); color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.15s;
+    min-height: 36px; min-width: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .btn-del:active { opacity: 0.7; }
 
-  /* STATS */
+  /* ── PERIODO TABS ────────────────────────────────────────────── */
+  .periodo-tabs {
+    display: flex; background: var(--gray-light);
+    border-radius: 10px; padding: 3px; margin-bottom: 12px;
+  }
+  .periodo-tab {
+    flex: 1; padding: 9px; border: none; border-radius: 8px; background: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700; color: var(--gray);
+    cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+    min-height: 38px;
+  }
+  .periodo-tab.active { background: var(--navy); color: white; }
+
+  /* ── STATS ───────────────────────────────────────────────────── */
   .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 12px;
   }
   .stat-card {
-    background: var(--white);
-    border-radius: 14px;
-    padding: 16px;
-    box-shadow: var(--shadow);
-    text-align: center;
+    background: var(--white); border-radius: 14px;
+    padding: 14px; box-shadow: var(--shadow); text-align: center;
   }
-  .stat-card.full { grid-column: 1 / -1; }
   .stat-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--gray);
-    margin-bottom: 6px;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--gray); margin-bottom: 5px;
   }
   .stat-value {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--navy);
-    line-height: 1;
+    font-size: 24px; font-weight: 800; color: var(--navy); line-height: 1;
   }
   .stat-value.orange { color: var(--orange); }
-  .stat-value.green { color: var(--green); }
-  .stat-sub {
-    font-size: 11px;
-    color: var(--gray);
-    margin-top: 3px;
-  }
+  .stat-value.green  { color: var(--green);  }
+  .stat-value.blue   { color: var(--blue);   }
+  .stat-sub { font-size: 10px; color: var(--gray); margin-top: 3px; }
 
-  /* PERIODO TABS */
-  .periodo-tabs {
-    display: flex;
-    background: var(--gray-light);
-    border-radius: 10px;
-    padding: 3px;
-    margin-bottom: 14px;
-  }
-  .periodo-tab {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    border-radius: 8px;
-    background: none;
+  /* ── INVENTARIO VISUAL ───────────────────────────────────────── */
+  .inv-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .inv-box { flex: 1; border-radius: 12px; padding: 14px 8px; text-align: center; }
+  .inv-box.llenos   { background: var(--green-light); border: 2px solid var(--green); }
+  .inv-box.vacios   { background: var(--blue-light);  border: 2px solid var(--blue);  }
+  .inv-box.prestados{ background: #fff3ed; border: 2px solid var(--orange); }
+  .inv-num {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--gray);
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
+    font-size: 32px; font-weight: 800; line-height: 1;
   }
-  .periodo-tab.active {
-    background: var(--navy);
-    color: white;
+  .inv-box.llenos   .inv-num { color: var(--green);  }
+  .inv-box.vacios   .inv-num { color: var(--blue);   }
+  .inv-box.prestados.inv-num { color: var(--orange); }
+  .inv-box.prestados .inv-num { color: var(--orange); }
+  .inv-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.3px;
+    margin-top: 4px; color: var(--navy); opacity: 0.7;
   }
 
-  /* LISTA MOVIMIENTOS */
-  .movimiento-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--gray-light);
+  /* ── MOVIMIENTOS ─────────────────────────────────────────────── */
+  .mov-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--gray-light); gap: 8px;
   }
-  .movimiento-item:last-child { border-bottom: none; }
-  .mov-left {}
+  .mov-item:last-child { border-bottom: none; }
+  .mov-left { flex: 1; min-width: 0; }
   .mov-cliente {
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--navy);
+    font-weight: 600; font-size: 14px; color: var(--navy);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .mov-meta {
-    font-size: 12px;
-    color: var(--gray);
-    margin-top: 2px;
-  }
-  .mov-right { text-align: right; }
+  .mov-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .mov-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
   .mov-valor {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 15px; font-weight: 700;
   }
-  .mov-valor.contado { color: var(--green); }
-  .mov-valor.fiado { color: var(--orange); }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    font-family: 'Barlow Condensed', sans-serif;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
-  .badge-contado { background: var(--green-light); color: var(--green); }
-  .badge-fiado { background: #fff3ed; color: var(--orange); }
-  .badge-abono { background: #e8f0ff; color: var(--navy); }
+  .mov-valor.contado        { color: var(--green);  }
+  .mov-valor.fiado          { color: var(--orange); }
+  .mov-valor.prestamo_pagado{ color: var(--blue);   }
+  .mov-valor.prestamo_fiado { color: var(--orange); }
+  .mov-valor.abono          { color: var(--green);  }
+  .mov-valor.devolucion     { color: var(--blue);   }
+  .mov-badges { display: flex; gap: 5px; align-items: center; }
 
-  /* FIADOS LIST */
-  .fiado-item {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--gray-light);
+  /* ── BADGES ──────────────────────────────────────────────────── */
+  .badge {
+    display: inline-block; padding: 2px 7px; border-radius: 20px;
+    font-size: 10px; font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
   }
-  .fiado-item:last-child { border-bottom: none; }
-  .fiado-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
+  .badge-contado   { background: var(--green-light); color: var(--green); }
+  .badge-fiado     { background: #fff3ed; color: var(--orange); }
+  .badge-prestamo  { background: var(--blue-light);  color: var(--blue);  }
+  .badge-abono     { background: #e8f0ff; color: var(--navy); }
+  .badge-devolucion{ background: var(--blue-light);  color: var(--blue);  }
+
+  /* ── DEUDAS / CILINDROS ──────────────────────────────────────── */
+  .deuda-item { padding: 12px 0; border-bottom: 1px solid var(--gray-light); }
+  .deuda-item:last-child { border-bottom: none; }
+  .deuda-top {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;
   }
-  .fiado-nombre {
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--navy);
-  }
-  .fiado-saldo {
+  .deuda-nombre { font-weight: 600; font-size: 14px; flex: 1; min-width: 0; padding-right: 8px; }
+  .deuda-saldo {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--orange);
+    font-size: 18px; font-weight: 800; flex-shrink: 0;
   }
-  .fiado-detail {
-    font-size: 12px;
-    color: var(--gray);
-    margin-bottom: 8px;
-  }
-  .fiado-actions { display: flex; gap: 8px; }
+  .deuda-saldo.dinero  { color: var(--orange); }
+  .deuda-saldo.cilindro{ color: var(--blue);   }
+  .deuda-detail { font-size: 11px; color: var(--gray); margin-bottom: 8px; }
+  .deuda-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ── FORM ABONO INLINE ───────────────────────────────────────── */
   .abono-form {
-    background: var(--gray-light);
-    border-radius: 8px;
-    padding: 10px;
-    margin-top: 8px;
-    display: none;
+    background: var(--gray-light); border-radius: 8px;
+    padding: 10px; margin-top: 10px;
+    display: none; gap: 8px; align-items: center;
   }
-  .abono-form.open { display: flex; gap: 8px; align-items: center; }
+  .abono-form.open { display: flex; }
   .abono-input {
-    flex: 1;
-    padding: 8px 12px;
-    border: 2px solid var(--gray-light);
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: 'Barlow', sans-serif;
-    color: var(--navy);
-    outline: none;
-    background: white;
+    flex: 1; padding: 10px 12px;
+    border: 2px solid var(--white); border-radius: 8px;
+    font-family: 'Barlow', sans-serif; color: var(--navy);
+    outline: none; background: white; min-width: 0;
   }
   .abono-input:focus { border-color: var(--orange); }
 
-  /* EMPTY STATE */
-  .empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--gray);
-  }
+  /* ── EMPTY STATE ─────────────────────────────────────────────── */
+  .empty { text-align: center; padding: 40px 20px; color: var(--gray); }
   .empty-icon { font-size: 40px; margin-bottom: 10px; }
-  .empty-text { font-size: 14px; }
+  .empty-text { font-size: 13px; }
 
-  /* SUCCESS TOAST */
+  /* ── TOAST ───────────────────────────────────────────────────── */
   #toast {
     position: fixed;
-    bottom: 24px;
+    bottom: calc(24px + var(--safe-bottom));
     left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--navy);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'Barlow', sans-serif;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--navy); color: white;
+    padding: 12px 24px; border-radius: 30px;
+    font-size: 14px; font-weight: 600; font-family: 'Barlow', sans-serif;
     box-shadow: var(--shadow-lg);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 999;
-    white-space: nowrap;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 9999; white-space: nowrap; max-width: 90vw;
   }
-  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.show    { transform: translateX(-50%) translateY(0); }
   #toast.success { background: var(--green); }
-  #toast.error { background: var(--red); }
+  #toast.error   { background: var(--red);   }
 
-  /* SECTION LABEL */
-  .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--gray);
-    margin: 18px 0 8px;
-  }
-
-  /* LOADING BAR */
-  #loadingBar {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--orange), var(--orange-light));
-    z-index: 999;
-    animation: loadingAnim 1s infinite;
-  }
-  @keyframes loadingAnim {
-    0% { opacity: 1; }
-    50% { opacity: 0.4; }
-    100% { opacity: 1; }
-  }
-
-  /* DELETE confirm */
+  /* ── CONFIRM OVERLAY ─────────────────────────────────────────── */
   .confirm-overlay {
     position: fixed; inset: 0;
-    background: rgba(26,39,68,0.6);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
+    background: rgba(26,39,68,0.65);
+    z-index: 500; display: flex;
+    align-items: center; justify-content: center; padding: 24px;
   }
   .confirm-box {
-    background: white;
-    border-radius: 16px;
-    padding: 28px 24px;
-    max-width: 320px;
-    width: 100%;
-    text-align: center;
+    background: white; border-radius: 18px;
+    padding: 28px 22px; max-width: 320px; width: 100%; text-align: center;
+    box-shadow: var(--shadow-lg);
   }
   .confirm-box h3 {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--navy);
-    margin-bottom: 10px;
+    font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px;
   }
-  .confirm-box p { font-size: 14px; color: var(--gray); margin-bottom: 20px; }
+  .confirm-box p { font-size: 13px; color: var(--gray); margin-bottom: 20px; line-height: 1.4; }
   .confirm-btns { display: flex; gap: 10px; }
-  .confirm-btns button { flex: 1; }
-
-  /* Logout */
-  .logout-btn {
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.5);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'Barlow', sans-serif;
-    padding: 4px 8px;
+  .confirm-btns button {
+    flex: 1; padding: 13px; border: none; border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 15px; cursor: pointer;
+    min-height: 48px;
   }
-  .logout-btn:hover { color: white; }
+  .btn-cancel { background: var(--gray-light); color: var(--navy); }
 </style>
 </head>
 <body>
@@ -596,11 +465,8 @@
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
-    <!-- Logo SVG inline (basado en Ferretería Cristian) -->
     <svg class="login-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" fill="#1a2744"/>
-      <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" fill="none" stroke="#1a2744" stroke-width="4"/>
-      <!-- F shape orange -->
       <rect x="78" y="62" width="14" height="76" fill="#d94f1e"/>
       <rect x="78" y="62" width="44" height="14" fill="#d94f1e"/>
       <rect x="78" y="96" width="34" height="13" fill="#d94f1e"/>
@@ -608,15 +474,14 @@
     <h1>FERRETERÍA <span>CRISTIAN</span></h1>
     <p>Control de Gas · Acceso administrativo</p>
     <label class="login-label">Contraseña</label>
-    <input type="password" id="passInput" class="login-input" placeholder="••••••••"
-      autocomplete="current-password"
-      onkeydown="if(event.key==='Enter') doLogin()">
+    <input type="password" id="passInput" class="login-input"
+      placeholder="••••••••" autocomplete="current-password"
+      autocorrect="off" autocapitalize="off" spellcheck="false">
     <div class="login-error" id="loginError">Contraseña incorrecta</div>
-    <button class="btn-primary" onclick="doLogin()">INGRESAR</button>
+    <button class="btn-primary" id="btnLogin">INGRESAR</button>
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <!-- APP -->
@@ -629,18 +494,17 @@
         <rect x="78" y="62" width="42" height="12" fill="#d94f1e"/>
         <rect x="78" y="96" width="32" height="11" fill="#d94f1e"/>
       </svg>
-      <div>
-        <div class="header-title">CONTROL <span>GAS</span></div>
-      </div>
+      <div class="header-title">CONTROL <span>GAS</span></div>
     </div>
-    <button class="logout-btn" onclick="logout()">Salir</button>
+    <button class="logout-btn" id="btnLogout">Salir</button>
   </header>
 
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('registrar')">🔥 Registrar</button>
-    <button class="tab" onclick="showTab('movimientos')">📋 Movimientos</button>
-    <button class="tab" onclick="showTab('fiados')">💳 Fiados</button>
-    <button class="tab" onclick="showTab('resumen')">📊 Resumen</button>
+  <div class="tabs" id="tabBar">
+    <button class="tab active" data-tab="registrar">🔥 Registrar</button>
+    <button class="tab" data-tab="movimientos">📋 Movimientos</button>
+    <button class="tab" data-tab="deudas">💳 Deudas</button>
+    <button class="tab" data-tab="cilindros">🔵 Cilindros</button>
+    <button class="tab" data-tab="resumen">📊 Resumen</button>
   </div>
 
   <div class="content">
@@ -648,96 +512,107 @@
     <!-- REGISTRAR -->
     <div class="screen active" id="screen-registrar">
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-icon">🔥</div>
-          Nueva salida de gas
+        <div class="card-title"><div class="card-title-icon">🔥</div>Nueva salida de gas</div>
+
+        <label class="field-label">Tipo de operación</label>
+        <div class="tipo-toggle">
+          <button id="btn-contado" class="t-contado" data-tipo="contado">✓ Contado<br><span style="font-size:10px;opacity:0.85">Paga + deja vacío</span></button>
+          <button id="btn-fiado" data-tipo="fiado">⏳ Fiado<br><span style="font-size:10px;opacity:0.85">No paga + deja vacío</span></button>
+          <button id="btn-prestamo" data-tipo="prestamo">🔄 Préstamo<br><span style="font-size:10px;opacity:0.85">Se lleva el cilindro</span></button>
         </div>
 
-        <label class="field-label">Tamaño del cilindro</label>
-        <select class="field-select" id="reg-tamano" onchange="actualizarPrecio()">
-          <option value="40">Cilindro 40 lb</option>
-        </select>
-
-        <label class="field-label">Tipo de venta</label>
-        <div class="toggle-pago">
-          <button id="btn-contado" class="active-contado" onclick="setTipo('contado')">✓ Contado</button>
-          <button id="btn-fiado" onclick="setTipo('fiado')">⏳ Fiado</button>
-        </div>
+        <div id="info-tipo" class="info-box green">✓ El cliente paga y deja el cilindro vacío.</div>
 
         <label class="field-label">Cliente / Nombre</label>
-        <input type="text" id="reg-cliente" class="field-input" placeholder="Nombre del cliente"
-          autocorrect="off" autocapitalize="words" spellcheck="false">
+        <input type="text" id="reg-cliente" class="field-input"
+          placeholder="Nombre del cliente"
+          autocorrect="off" autocapitalize="words" spellcheck="false"
+          autocomplete="off">
 
         <div class="precio-display">
-          <div>
-            <div class="precio-label">Valor cilindro 40 lb</div>
-          </div>
-          <div class="precio-valor" id="precioDisplay">$116.000</div>
+          <div class="precio-label">Cilindro 40 lb</div>
+          <div class="precio-valor">$116.000</div>
         </div>
 
-        <button class="btn-block btn-orange" onclick="registrarVenta()">REGISTRAR SALIDA</button>
+        <div id="campo-pago-prestamo" style="display:none">
+          <label class="field-label">¿Pagó el cilindro?</label>
+          <div class="tipo-toggle">
+            <button id="btn-pp-si" class="t-contado" data-pago="true">✓ Sí pagó</button>
+            <button id="btn-pp-no" data-pago="false">✗ No pagó (queda fiado)</button>
+          </div>
+        </div>
+
+        <button class="btn-block btn-orange" id="btnRegistrar">REGISTRAR SALIDA</button>
       </div>
     </div>
 
     <!-- MOVIMIENTOS -->
     <div class="screen" id="screen-movimientos">
-      <div class="periodo-tabs">
-        <button class="periodo-tab active" onclick="setPeriodo('hoy', this)">Hoy</button>
-        <button class="periodo-tab" onclick="setPeriodo('semana', this)">Semana</button>
-        <button class="periodo-tab" onclick="setPeriodo('mes', this)">Mes</button>
-        <button class="periodo-tab" onclick="setPeriodo('todos', this)">Todo</button>
+      <div class="periodo-tabs" id="periodoMovTabs">
+        <button class="periodo-tab active" data-periodo="hoy">Hoy</button>
+        <button class="periodo-tab" data-periodo="semana">Semana</button>
+        <button class="periodo-tab" data-periodo="mes">Mes</button>
+        <button class="periodo-tab" data-periodo="todos">Todo</button>
       </div>
       <div id="lista-movimientos"></div>
     </div>
 
-    <!-- FIADOS -->
-    <div class="screen" id="screen-fiados">
-      <div id="lista-fiados"></div>
+    <!-- DEUDAS -->
+    <div class="screen" id="screen-deudas">
+      <div id="lista-deudas"></div>
+    </div>
+
+    <!-- CILINDROS -->
+    <div class="screen" id="screen-cilindros">
+      <div id="lista-cilindros"></div>
     </div>
 
     <!-- RESUMEN -->
     <div class="screen" id="screen-resumen">
-      <div class="periodo-tabs">
-        <button class="periodo-tab active" onclick="setResumenPeriodo('hoy', this)">Hoy</button>
-        <button class="periodo-tab" onclick="setResumenPeriodo('semana', this)">Semana</button>
-        <button class="periodo-tab" onclick="setResumenPeriodo('mes', this)">Mes</button>
+      <div class="periodo-tabs" id="periodoResTabs">
+        <button class="periodo-tab active" data-periodo="hoy">Hoy</button>
+        <button class="periodo-tab" data-periodo="semana">Semana</button>
+        <button class="periodo-tab" data-periodo="mes">Mes</button>
       </div>
+      <div class="inv-row" id="inv-row"></div>
       <div class="stats-grid" id="stats-grid"></div>
 
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-icon">📦</div>
-          Registro de entrada
-        </div>
-        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">¿Llegó cilindros del proveedor? Regístralo aquí.</p>
-        <label class="field-label">Cantidad de cilindros recibidos</label>
-        <input type="number" id="entrada-cant" class="field-input" placeholder="Ej: 10" min="1">
+        <div class="card-title"><div class="card-title-icon">📦</div>Llegada del proveedor</div>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">
+          Registra los cilindros llenos que llegaron y los vacíos que entregaste.
+        </p>
+        <label class="field-label">Cilindros llenos recibidos</label>
+        <input type="number" id="entrada-llenos" class="field-input"
+          placeholder="Ej: 10" min="1" inputmode="numeric" pattern="[0-9]*">
+        <label class="field-label">Cilindros vacíos entregados al proveedor</label>
+        <input type="number" id="entrada-vacios" class="field-input"
+          placeholder="Ej: 8" min="0" inputmode="numeric" pattern="[0-9]*">
         <label class="field-label">Observación (opcional)</label>
-        <input type="text" id="entrada-obs" class="field-input" placeholder="Proveedor, factura...">
-        <button class="btn-block btn-navy" onclick="registrarEntrada()">REGISTRAR ENTRADA</button>
+        <input type="text" id="entrada-obs" class="field-input"
+          placeholder="Factura, proveedor..." autocomplete="off">
+        <button class="btn-block btn-navy" id="btnEntrada">REGISTRAR ENTRADA</button>
       </div>
 
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-icon">🗑️</div>
-          Zona de datos
-        </div>
-        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">Borrar todos los datos guardados en este dispositivo.</p>
-        <button class="btn-block btn-sm btn-red" onclick="confirmarBorrar()">Borrar todos los datos</button>
+        <div class="card-title"><div class="card-title-icon">🔄</div>Datos</div>
+        <button class="btn-block btn-navy" id="btnRecargar" style="font-size:14px;">
+          Recargar desde la nube
+        </button>
       </div>
     </div>
 
   </div><!-- /content -->
 </div><!-- /app -->
 
-<!-- CONFIRM DELETE -->
+<!-- CONFIRM -->
 <div class="confirm-overlay" id="confirmOverlay" style="display:none">
   <div class="confirm-box">
-    <h3>¿Borrar todo?</h3>
+    <h3 id="confirmTitle">¿Confirmar?</h3>
     <p id="confirmMsg">Esta acción no se puede deshacer.</p>
     <div class="confirm-btns">
-      <button class="btn-block btn-sm" style="background:var(--gray-light);color:var(--navy);font-family:'Barlow Condensed',sans-serif;font-weight:700;border:none;border-radius:8px;padding:11px;cursor:pointer;" onclick="cerrarConfirm()">Cancelar</button>
-      <button class="btn-block btn-sm btn-red" id="confirmBtn" style="border-radius:8px;padding:11px;font-family:'Barlow Condensed',sans-serif;font-weight:700;" onclick="">Borrar</button>
+      <button class="btn-cancel" id="btnCancelar">Cancelar</button>
+      <button class="btn-red" id="confirmBtn">Confirmar</button>
     </div>
   </div>
 </div>
@@ -747,7 +622,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, deleteDoc, doc }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// ─── FIREBASE CONFIG ──────────────────────────────────────────────────
+// ─── CONFIG ───────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyDlSd08Ao02WgdFANiKBV3XAKqFkZz1qIA",
   authDomain: "gastos-ferreteria.firebaseapp.com",
@@ -756,369 +631,623 @@ const firebaseConfig = {
   messagingSenderId: "198825830729",
   appId: "1:198825830729:web:1ed10370fb4f829d841298"
 };
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
+const db = getFirestore(initializeApp(firebaseConfig));
 
-// ─── CONFIG ───────────────────────────────────────────────────────────
 const PASSWORD = 'gas2024';
-const PRECIOS = { '40': 116000 };
+const PRECIO   = 116000;
 
 // ─── STATE ────────────────────────────────────────────────────────────
-let tipoVenta = 'contado';
-let periodoMovimientos = 'hoy';
-let periodoResumen = 'hoy';
-let pendingConfirmFn = null;
-let cache = { ventas: [], entradas: [], abonos: [] };
-let cargando = false;
+let tipoVenta        = 'contado';
+let pagoPrestamo     = true;
+let periodoMov       = 'hoy';
+let periodoRes       = 'hoy';
+let cargando         = false;
+let cache = { ventas:[], entradas:[], abonos:[], devoluciones:[] };
 
-// ─── FIRESTORE HELPERS ────────────────────────────────────────────────
+// IDs de clientes mapeados para evitar bugs con nombres especiales
+let clienteMap = {}; // id → nombre
+
+// ─── FIRESTORE ────────────────────────────────────────────────────────
+const toISO = ts => ts?.toDate?.()?.toISOString() ?? ts ?? new Date().toISOString();
+const parseSnap = snap => snap.docs.map(d => ({ id:d.id, ...d.data(), fecha:toISO(d.data().fecha) }));
+
 async function cargarDatos() {
   mostrarCargando(true);
   try {
-    const [ventasSnap, entradasSnap, abonosSnap] = await Promise.all([
-      getDocs(query(collection(db, 'gas_ventas'), orderBy('fecha', 'desc'))),
-      getDocs(query(collection(db, 'gas_entradas'), orderBy('fecha', 'desc'))),
-      getDocs(query(collection(db, 'gas_abonos'), orderBy('fecha', 'desc')))
+    const [v,e,a,d] = await Promise.all([
+      getDocs(query(collection(db,'gas_ventas'),       orderBy('fecha','desc'))),
+      getDocs(query(collection(db,'gas_entradas'),     orderBy('fecha','desc'))),
+      getDocs(query(collection(db,'gas_abonos'),       orderBy('fecha','desc'))),
+      getDocs(query(collection(db,'gas_devoluciones'), orderBy('fecha','desc')))
     ]);
-    cache.ventas   = ventasSnap.docs.map(d => ({ id: d.id, ...d.data(), fecha: d.data().fecha?.toDate?.()?.toISOString() || d.data().fecha }));
-    cache.entradas = entradasSnap.docs.map(d => ({ id: d.id, ...d.data(), fecha: d.data().fecha?.toDate?.()?.toISOString() || d.data().fecha }));
-    cache.abonos   = abonosSnap.docs.map(d => ({ id: d.id, ...d.data(), fecha: d.data().fecha?.toDate?.()?.toISOString() || d.data().fecha }));
-  } catch (e) {
-    showToast('Error cargando datos', 'error');
-    console.error(e);
+    cache.ventas       = parseSnap(v);
+    cache.entradas     = parseSnap(e);
+    cache.abonos       = parseSnap(a);
+    cache.devoluciones = parseSnap(d);
+  } catch(err) {
+    showToast('Error cargando datos','error');
+    console.error(err);
   }
   mostrarCargando(false);
 }
 
-async function guardarVenta(venta) {
-  const ref = await addDoc(collection(db, 'gas_ventas'), { ...venta, fecha: serverTimestamp() });
-  cache.ventas.unshift({ ...venta, id: ref.id, fecha: new Date().toISOString() });
-}
-async function guardarEntrada(entrada) {
-  const ref = await addDoc(collection(db, 'gas_entradas'), { ...entrada, fecha: serverTimestamp() });
-  cache.entradas.unshift({ ...entrada, id: ref.id, fecha: new Date().toISOString() });
-}
-async function guardarAbono(abono) {
-  const ref = await addDoc(collection(db, 'gas_abonos'), { ...abono, fecha: serverTimestamp() });
-  cache.abonos.unshift({ ...abono, id: ref.id, fecha: new Date().toISOString() });
-}
-
-// ─── ELIMINAR MOVIMIENTO ──────────────────────────────────────────────
-window.pedirEliminar = function(id, coleccion, descripcion) {
-  document.getElementById('confirmMsg').textContent = `¿Eliminar "${descripcion}"? Esta acción no se puede deshacer.`;
-  document.getElementById('confirmBtn').textContent = 'Eliminar';
-  document.getElementById('confirmBtn').onclick = async () => {
-    cerrarConfirm();
-    mostrarCargando(true);
-    try {
-      await deleteDoc(doc(db, coleccion, id));
-      if (coleccion === 'gas_ventas') cache.ventas = cache.ventas.filter(v => v.id !== id);
-      if (coleccion === 'gas_abonos') cache.abonos = cache.abonos.filter(a => a.id !== id);
-      renderMovimientos();
-      renderFiados();
-      renderResumen();
-      showToast('Registro eliminado', 'success');
-    } catch { showToast('Error al eliminar', 'error'); }
-    mostrarCargando(false);
-  };
-  document.getElementById('confirmOverlay').style.display = 'flex';
-}
-
-function mostrarCargando(show) {
-  cargando = show;
-  document.getElementById('loadingBar').style.display = show ? 'block' : 'none';
+function mostrarCargando(s) {
+  cargando = s;
+  document.getElementById('loadingBar').style.display = s ? 'block' : 'none';
 }
 
 // ─── LOGIN ────────────────────────────────────────────────────────────
-window.doLogin = async function() {
+async function doLogin() {
   const pass = document.getElementById('passInput').value;
   if (pass === PASSWORD) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     await cargarDatos();
-    renderMovimientos();
-    renderFiados();
-    renderResumen();
+    renderAll();
   } else {
     document.getElementById('loginError').style.display = 'block';
     document.getElementById('passInput').value = '';
   }
 }
-window.logout = function() {
+
+function logout() {
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('passInput').value = '';
   document.getElementById('loginError').style.display = 'none';
-  cache = { ventas: [], entradas: [], abonos: [] };
+  cache = { ventas:[], entradas:[], abonos:[], devoluciones:[] };
+  clienteMap = {};
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────
-window.showTab = function(name) {
+function showTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
   document.getElementById('screen-' + name).classList.add('active');
   if (name === 'movimientos') renderMovimientos();
-  if (name === 'fiados') renderFiados();
-  if (name === 'resumen') renderResumen();
+  if (name === 'deudas')      renderDeudas();
+  if (name === 'cilindros')   renderCilindros();
+  if (name === 'resumen')     renderResumen();
 }
 
 // ─── TIPO VENTA ───────────────────────────────────────────────────────
-window.setTipo = function(tipo) {
+function setTipo(tipo) {
   tipoVenta = tipo;
-  document.getElementById('btn-contado').className = tipo === 'contado' ? 'active-contado' : '';
-  document.getElementById('btn-fiado').className = tipo === 'fiado' ? 'active-fiado' : '';
+  ['contado','fiado','prestamo'].forEach(t => {
+    document.getElementById('btn-' + t).className = t === tipo ? 't-' + t : '';
+  });
+  const info = document.getElementById('info-tipo');
+  const cfg = {
+    contado:  ['green',  '✓ El cliente paga y deja el cilindro vacío.'],
+    fiado:    ['orange', '⏳ El cliente no paga ahora, pero deja el cilindro vacío.'],
+    prestamo: ['blue',   '🔄 El cliente se lleva el cilindro lleno sin dejar el vacío. Debe devolver el cilindro.']
+  };
+  info.className = 'info-box ' + cfg[tipo][0];
+  info.textContent = cfg[tipo][1];
+  document.getElementById('campo-pago-prestamo').style.display = tipo === 'prestamo' ? 'block' : 'none';
+  if (tipo === 'prestamo') setPagoPrestamo(true);
 }
-window.actualizarPrecio = function() {
-  const tam = document.getElementById('reg-tamano').value;
-  document.getElementById('precioDisplay').textContent = '$' + formatNum(PRECIOS[tam] || 0);
+
+function setPagoPrestamo(pago) {
+  pagoPrestamo = pago;
+  document.getElementById('btn-pp-si').className = pago  ? 't-contado' : '';
+  document.getElementById('btn-pp-no').className = !pago ? 't-fiado'   : '';
 }
 
 // ─── REGISTRAR VENTA ──────────────────────────────────────────────────
-window.registrarVenta = async function() {
+async function registrarVenta() {
   if (cargando) return;
   const cliente = document.getElementById('reg-cliente').value.trim();
-  const tamano = document.getElementById('reg-tamano').value;
   if (!cliente) { showToast('Ingresa el nombre del cliente', 'error'); return; }
-  const precio = PRECIOS[tamano];
+
+  const tipoDoc = tipoVenta === 'prestamo'
+    ? (pagoPrestamo ? 'prestamo_pagado' : 'prestamo_fiado')
+    : tipoVenta;
+
   mostrarCargando(true);
   try {
-    await guardarVenta({ cliente, tamano, precio, tipo: tipoVenta });
+    const ref = await addDoc(collection(db,'gas_ventas'), {
+      cliente, precio: PRECIO, tipo: tipoDoc, fecha: serverTimestamp()
+    });
+    cache.ventas.unshift({ id:ref.id, cliente, precio:PRECIO, tipo:tipoDoc, fecha:new Date().toISOString() });
     document.getElementById('reg-cliente').value = '';
-    showToast(tipoVenta === 'contado' ? '✓ Venta registrada' : '✓ Fiado registrado', 'success');
-    renderMovimientos();
-    renderFiados();
-    renderResumen();
-  } catch { showToast('Error al guardar', 'error'); }
+    const msgs = {
+      contado:         '✓ Venta registrada',
+      fiado:           '✓ Fiado registrado',
+      prestamo_pagado: '✓ Préstamo registrado (pagado)',
+      prestamo_fiado:  '✓ Préstamo registrado (fiado)'
+    };
+    showToast(msgs[tipoDoc], 'success');
+    renderAll();
+  } catch(err) { showToast('Error al guardar','error'); console.error(err); }
   mostrarCargando(false);
 }
 
 // ─── REGISTRAR ENTRADA ────────────────────────────────────────────────
-window.registrarEntrada = async function() {
+async function registrarEntrada() {
   if (cargando) return;
-  const cant = parseInt(document.getElementById('entrada-cant').value);
-  const obs = document.getElementById('entrada-obs').value.trim();
-  if (!cant || cant < 1) { showToast('Ingresa la cantidad', 'error'); return; }
+  const llenos = parseInt(document.getElementById('entrada-llenos').value) || 0;
+  const vacios = parseInt(document.getElementById('entrada-vacios').value) || 0;
+  const obs    = document.getElementById('entrada-obs').value.trim();
+  if (llenos < 1) { showToast('Ingresa cilindros llenos recibidos','error'); return; }
   mostrarCargando(true);
   try {
-    await guardarEntrada({ cantidad: cant, obs });
-    document.getElementById('entrada-cant').value = '';
-    document.getElementById('entrada-obs').value = '';
-    showToast(`✓ ${cant} cilindro(s) registrado(s)`, 'success');
+    const ref = await addDoc(collection(db,'gas_entradas'), { llenos, vacios, obs, fecha: serverTimestamp() });
+    cache.entradas.unshift({ id:ref.id, llenos, vacios, obs, fecha:new Date().toISOString() });
+    document.getElementById('entrada-llenos').value = '';
+    document.getElementById('entrada-vacios').value = '';
+    document.getElementById('entrada-obs').value    = '';
+    showToast(`✓ ${llenos} llenos recibidos, ${vacios} vacíos entregados`, 'success');
     renderResumen();
-  } catch { showToast('Error al guardar', 'error'); }
+  } catch(err) { showToast('Error al guardar','error'); console.error(err); }
   mostrarCargando(false);
+}
+
+// ─── ABONO ────────────────────────────────────────────────────────────
+function toggleAbono(clienteId) {
+  const form  = document.getElementById('abono-form-' + clienteId);
+  const input = document.getElementById('abono-monto-' + clienteId);
+  if (!form) return;
+  const open = form.classList.toggle('open');
+  if (open && input) {
+    // Pequeño delay para que el DOM se renderice antes del focus
+    setTimeout(() => input.focus(), 80);
+  }
+}
+
+async function registrarAbono(clienteId, saldoActual) {
+  if (cargando) return;
+  const cliente = clienteMap[clienteId];
+  const input   = document.getElementById('abono-monto-' + clienteId);
+  const monto   = parseInt(input?.value) || 0;
+  if (monto <= 0)         { showToast('Ingresa un valor válido','error'); return; }
+  if (monto > saldoActual){ showToast('El abono supera el saldo','error'); return; }
+  mostrarCargando(true);
+  try {
+    const ref = await addDoc(collection(db,'gas_abonos'), { cliente, monto, fecha: serverTimestamp() });
+    cache.abonos.unshift({ id:ref.id, cliente, monto, fecha:new Date().toISOString() });
+    showToast('✓ Abono registrado', 'success');
+    renderDeudas(); renderMovimientos(); renderResumen();
+  } catch(err) { showToast('Error al guardar','error'); console.error(err); }
+  mostrarCargando(false);
+}
+
+// ─── DEVOLUCIÓN ───────────────────────────────────────────────────────
+function pedirDevolucion(clienteId) {
+  const cliente = clienteMap[clienteId];
+  mostrarConfirm(
+    '¿Registrar devolución?',
+    `${cliente} devuelve 1 cilindro vacío.`,
+    'Confirmar', 'btn-blue',
+    async () => {
+      mostrarCargando(true);
+      try {
+        const ref = await addDoc(collection(db,'gas_devoluciones'), { cliente, fecha: serverTimestamp() });
+        cache.devoluciones.unshift({ id:ref.id, cliente, fecha:new Date().toISOString() });
+        showToast(`✓ Cilindro devuelto por ${cliente}`, 'success');
+        renderAll();
+      } catch(err) { showToast('Error al guardar','error'); console.error(err); }
+      mostrarCargando(false);
+    }
+  );
+}
+
+// ─── ELIMINAR ─────────────────────────────────────────────────────────
+function pedirEliminar(id, col, desc) {
+  mostrarConfirm(
+    '¿Eliminar registro?',
+    `${desc} — No se puede deshacer.`,
+    'Eliminar', 'btn-red',
+    async () => {
+      mostrarCargando(true);
+      try {
+        await deleteDoc(doc(db, col, id));
+        if (col === 'gas_ventas')       cache.ventas       = cache.ventas.filter(v => v.id !== id);
+        if (col === 'gas_abonos')       cache.abonos       = cache.abonos.filter(a => a.id !== id);
+        if (col === 'gas_devoluciones') cache.devoluciones = cache.devoluciones.filter(d => d.id !== id);
+        renderAll();
+        showToast('Registro eliminado', 'success');
+      } catch(err) { showToast('Error al eliminar','error'); console.error(err); }
+      mostrarCargando(false);
+    }
+  );
+}
+
+// ─── CONFIRM GENÉRICO ─────────────────────────────────────────────────
+function mostrarConfirm(titulo, msg, accion, btnClass, fn) {
+  document.getElementById('confirmTitle').textContent = titulo;
+  document.getElementById('confirmMsg').textContent   = msg;
+  const btn = document.getElementById('confirmBtn');
+  btn.textContent = accion;
+  btn.className   = btnClass;
+  btn.onclick = () => { cerrarConfirm(); fn(); };
+  document.getElementById('confirmOverlay').style.display = 'flex';
+}
+function cerrarConfirm() {
+  document.getElementById('confirmOverlay').style.display = 'none';
 }
 
 // ─── FILTROS ──────────────────────────────────────────────────────────
-function filtrarPorPeriodo(items, periodo) {
+function filtrar(items, periodo) {
   const ahora = new Date();
-  return items.filter(v => {
-    const fecha = new Date(v.fecha);
-    if (periodo === 'hoy') return fecha.toDateString() === ahora.toDateString();
+  return items.filter(item => {
+    const f = new Date(item.fecha);
+    if (periodo === 'hoy')    return f.toDateString() === ahora.toDateString();
     if (periodo === 'semana') {
       const lunes = new Date(ahora);
-      lunes.setDate(ahora.getDate() - ahora.getDay() + (ahora.getDay() === 0 ? -6 : 1));
+      lunes.setDate(ahora.getDate() - ((ahora.getDay() + 6) % 7));
       lunes.setHours(0,0,0,0);
-      return fecha >= lunes;
+      return f >= lunes;
     }
-    if (periodo === 'mes') return fecha.getMonth() === ahora.getMonth() && fecha.getFullYear() === ahora.getFullYear();
+    if (periodo === 'mes')
+      return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear();
     return true;
   });
 }
-window.setPeriodo = function(p, el) {
-  periodoMovimientos = p;
-  document.querySelectorAll('#screen-movimientos .periodo-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderMovimientos();
+
+// ─── CÁLCULOS ─────────────────────────────────────────────────────────
+function calcInventario() {
+  const llenosRec  = cache.entradas.reduce((s,e) => s + (e.llenos ?? e.cantidad ?? 0), 0);
+  const vaciosEnt  = cache.entradas.reduce((s,e) => s + (e.vacios ?? 0), 0);
+  const normales   = cache.ventas.filter(v => v.tipo==='contado' || v.tipo==='fiado').length;
+  const prestamos  = cache.ventas.filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado').length;
+  const devueltos  = cache.devoluciones.length;
+  return {
+    llenos:    Math.max(0, llenosRec - cache.ventas.length),
+    vacios:    Math.max(0, normales + devueltos - vaciosEnt),
+    prestados: Math.max(0, prestamos - devueltos)
+  };
 }
-window.setResumenPeriodo = function(p, el) {
-  periodoResumen = p;
-  document.querySelectorAll('#screen-resumen .periodo-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderResumen();
+
+function calcDeudas() {
+  const cl = {};
+  cache.ventas.filter(v => v.tipo==='fiado' || v.tipo==='prestamo_fiado').forEach(v => {
+    if (!cl[v.cliente]) cl[v.cliente] = { deuda:0, cargas:0 };
+    cl[v.cliente].deuda  += v.precio;
+    cl[v.cliente].cargas += 1;
+  });
+  cache.abonos.forEach(a => { if (cl[a.cliente]) cl[a.cliente].deuda -= a.monto; });
+  return Object.entries(cl)
+    .filter(([,d]) => d.deuda > 0)
+    .map(([nombre, d]) => ({ nombre, ...d }));
+}
+
+function calcCilindrosPrestados() {
+  const cl = {};
+  cache.ventas.filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado')
+    .forEach(v => { cl[v.cliente] = (cl[v.cliente] ?? 0) + 1; });
+  cache.devoluciones.forEach(d => { cl[d.cliente] = (cl[d.cliente] ?? 0) - 1; });
+  return Object.entries(cl)
+    .filter(([,n]) => n > 0)
+    .map(([nombre, cantidad]) => ({ nombre, cantidad }));
+}
+
+// ─── HELPER: ID seguro para cliente ───────────────────────────────────
+let clienteIdCounter = 0;
+function getClienteId(nombre) {
+  const existing = Object.entries(clienteMap).find(([,n]) => n === nombre);
+  if (existing) return existing[0];
+  const id = 'c' + (++clienteIdCounter);
+  clienteMap[id] = nombre;
+  return id;
 }
 
 // ─── RENDER MOVIMIENTOS ───────────────────────────────────────────────
+const BADGE = {
+  contado:        ['badge-contado',  'CONTADO'],
+  fiado:          ['badge-fiado',    'FIADO'],
+  prestamo_pagado:['badge-prestamo', 'PRÉSTAMO'],
+  prestamo_fiado: ['badge-prestamo', 'PRÉSTAMO+FIADO'],
+};
+
 function renderMovimientos() {
   const container = document.getElementById('lista-movimientos');
-  const ventas = filtrarPorPeriodo(cache.ventas, periodoMovimientos);
-  const abonos = filtrarPorPeriodo(cache.abonos, periodoMovimientos).map(a => ({...a, _esAbono: true}));
-  const todos = [...ventas, ...abonos].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+  const ventas = filtrar(cache.ventas, periodoMov);
+  const abonos = filtrar(cache.abonos, periodoMov).map(a => ({...a, _t:'abono'}));
+  const devols = filtrar(cache.devoluciones, periodoMov).map(d => ({...d, _t:'devolucion'}));
+  const todos  = [...ventas, ...abonos, ...devols]
+    .sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
 
   if (!todos.length) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Sin movimientos en este período</div></div>`;
+    container.innerHTML = emptyHTML('📋','Sin movimientos en este período');
     return;
   }
-  container.innerHTML = todos.map(m => {
-    if (m._esAbono) return `<div class="movimiento-item">
-      <div class="mov-left"><div class="mov-cliente">${m.cliente}</div><div class="mov-meta">Abono · ${formatFecha(m.fecha)}</div></div>
-      <div class="mov-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-        <div class="mov-valor contado">+${formatPeso(m.monto)}</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <span class="badge badge-abono">ABONO</span>
-          <button class="btn-sm btn-red" style="padding:3px 9px;font-size:11px;" onclick="pedirEliminar('${m.id}','gas_abonos','Abono ${formatPeso(m.monto)} · ${m.cliente}')">✕</button>
-        </div>
-      </div>
-    </div>`;
-    return `<div class="movimiento-item">
-      <div class="mov-left"><div class="mov-cliente">${m.cliente}</div><div class="mov-meta">Cilindro ${m.tamano}lb · ${formatFecha(m.fecha)}</div></div>
-      <div class="mov-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-        <div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <span class="badge badge-${m.tipo}">${m.tipo.toUpperCase()}</span>
-          <button class="btn-sm btn-red" style="padding:3px 9px;font-size:11px;" onclick="pedirEliminar('${m.id}','gas_ventas','${m.tipo === 'fiado' ? 'Fiado' : 'Venta'} ${formatPeso(m.precio)} · ${m.cliente}')">✕</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
 
-// ─── RENDER FIADOS ────────────────────────────────────────────────────
-function renderFiados() {
-  const container = document.getElementById('lista-fiados');
-  const clientes = {};
-  cache.ventas.filter(v => v.tipo === 'fiado').forEach(v => {
-    if (!clientes[v.cliente]) clientes[v.cliente] = { nombre: v.cliente, total: 0, saldo: 0, cargas: 0 };
-    clientes[v.cliente].total += v.precio;
-    clientes[v.cliente].saldo += v.precio;
-    clientes[v.cliente].cargas++;
+  const fragment = document.createDocumentFragment();
+  todos.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'mov-item';
+
+    if (m._t === 'abono') {
+      div.innerHTML = `
+        <div class="mov-left">
+          <div class="mov-cliente">${esc(m.cliente)}</div>
+          <div class="mov-meta">Abono · ${formatFecha(m.fecha)}</div>
+        </div>
+        <div class="mov-right">
+          <div class="mov-valor abono">+${formatPeso(m.monto)}</div>
+          <div class="mov-badges">
+            <span class="badge badge-abono">ABONO</span>
+          </div>
+        </div>`;
+      div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_abonos',`Abono ${formatPeso(m.monto)} · ${m.cliente}`));
+    } else if (m._t === 'devolucion') {
+      div.innerHTML = `
+        <div class="mov-left">
+          <div class="mov-cliente">${esc(m.cliente)}</div>
+          <div class="mov-meta">Devolución cilindro · ${formatFecha(m.fecha)}</div>
+        </div>
+        <div class="mov-right">
+          <div class="mov-valor devolucion">+1 vacío</div>
+          <div class="mov-badges">
+            <span class="badge badge-devolucion">DEVOLUCIÓN</span>
+          </div>
+        </div>`;
+      div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_devoluciones',`Devolución · ${m.cliente}`));
+    } else {
+      const [badgeClass, badgeLabel] = BADGE[m.tipo] || ['badge-contado','?'];
+      div.innerHTML = `
+        <div class="mov-left">
+          <div class="mov-cliente">${esc(m.cliente)}</div>
+          <div class="mov-meta">Cilindro 40lb · ${formatFecha(m.fecha)}</div>
+        </div>
+        <div class="mov-right">
+          <div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div>
+          <div class="mov-badges">
+            <span class="badge ${badgeClass}">${badgeLabel}</span>
+          </div>
+        </div>`;
+      div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_ventas',`${badgeLabel} · ${m.cliente}`));
+    }
+    fragment.appendChild(div);
   });
-  cache.abonos.forEach(a => { if (clientes[a.cliente]) clientes[a.cliente].saldo -= a.monto; });
-  const activos = Object.values(clientes).filter(c => c.saldo > 0);
+  container.innerHTML = '';
+  container.appendChild(fragment);
+}
 
-  if (!activos.length) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No hay fiados pendientes</div></div>`;
+function delBtn(id, col, desc) {
+  const btn = document.createElement('button');
+  btn.className = 'btn-del';
+  btn.textContent = '✕';
+  btn.addEventListener('click', () => pedirEliminar(id, col, desc));
+  return btn;
+}
+
+// ─── RENDER DEUDAS ────────────────────────────────────────────────────
+function renderDeudas() {
+  const container = document.getElementById('lista-deudas');
+  clienteMap = {}; clienteIdCounter = 0; // reset mapa
+  const deudas = calcDeudas();
+
+  if (!deudas.length) {
+    container.innerHTML = emptyHTML('✅','No hay deudas de plata pendientes');
     return;
   }
-  container.innerHTML = `<div class="card">
-    <div class="card-title"><div class="card-title-icon">💳</div>Clientes con saldo</div>
-    ${activos.map(c => `
-      <div class="fiado-item">
-        <div class="fiado-top">
-          <div class="fiado-nombre">${c.nombre}</div>
-          <div class="fiado-saldo">${formatPeso(c.saldo)}</div>
-        </div>
-        <div class="fiado-detail">${c.cargas} carga(s) · Total fiado: ${formatPeso(c.total)}</div>
-        <div class="fiado-actions">
-          <button class="btn-sm btn-green" onclick="toggleAbono('${c.nombre}')">+ Abonar</button>
-          <button class="btn-sm" style="background:var(--gray-light);color:var(--navy);" onclick="verHistorial('${c.nombre}')">Historial</button>
-        </div>
-        <div class="abono-form" id="abono-${CSS.escape(c.nombre)}">
-          <input type="number" class="abono-input" id="monto-${CSS.escape(c.nombre)}" placeholder="Valor abono" min="1">
-          <button class="btn-sm btn-orange" onclick="registrarAbono('${c.nombre}', ${c.saldo})">OK</button>
-        </div>
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="card-title"><div class="card-title-icon">💳</div>Deudas de plata</div>`;
+
+  deudas.forEach(c => {
+    const cid = getClienteId(c.nombre);
+    const item = document.createElement('div');
+    item.className = 'deuda-item';
+    item.innerHTML = `
+      <div class="deuda-top">
+        <div class="deuda-nombre">${esc(c.nombre)}</div>
+        <div class="deuda-saldo dinero">${formatPeso(c.deuda)}</div>
       </div>
-    `).join('')}
-  </div>`;
+      <div class="deuda-detail">${c.cargas} carga(s) pendiente(s) de pago</div>
+      <div class="deuda-actions">
+        <button class="btn-sm btn-green" id="btn-abono-${cid}">+ Abonar</button>
+      </div>
+      <div class="abono-form" id="abono-form-${cid}">
+        <input type="number" class="abono-input" id="abono-monto-${cid}"
+          placeholder="Valor abono" min="1" inputmode="numeric" pattern="[0-9]*">
+        <button class="btn-sm btn-orange" id="btn-ok-${cid}">OK</button>
+      </div>`;
+    card.appendChild(item);
+
+    // Event listeners sin onclick inline
+    item.querySelector('#btn-abono-' + cid).addEventListener('click', () => toggleAbono(cid));
+    item.querySelector('#btn-ok-' + cid).addEventListener('click', () => registrarAbono(cid, c.deuda));
+    item.querySelector('#abono-monto-' + cid).addEventListener('keydown', e => {
+      if (e.key === 'Enter') registrarAbono(cid, c.deuda);
+    });
+  });
+
+  container.innerHTML = '';
+  container.appendChild(card);
 }
 
-window.toggleAbono = function(nombre) {
-  const form = document.getElementById('abono-' + CSS.escape(nombre));
-  if (form) { const open = form.classList.toggle('open'); if (open) document.getElementById('monto-' + CSS.escape(nombre))?.focus(); }
-}
-window.registrarAbono = async function(cliente, saldoActual) {
-  if (cargando) return;
-  const input = document.getElementById('monto-' + CSS.escape(cliente));
-  const monto = parseInt(input?.value);
-  if (!monto || monto <= 0) { showToast('Ingresa un valor válido', 'error'); return; }
-  if (monto > saldoActual) { showToast('El abono supera el saldo', 'error'); return; }
-  mostrarCargando(true);
-  try {
-    await guardarAbono({ cliente, monto });
-    showToast('✓ Abono registrado', 'success');
-    renderFiados();
-    renderMovimientos();
-  } catch { showToast('Error al guardar', 'error'); }
-  mostrarCargando(false);
-}
-window.verHistorial = function(nombre) {
-  const ventas = cache.ventas.filter(v => v.cliente === nombre && v.tipo === 'fiado');
-  const abonos = cache.abonos.filter(a => a.cliente === nombre);
-  let msg = `Historial de ${nombre}:\n\nCargas:\n`;
-  ventas.forEach(v => msg += `  ${formatFechaCorta(v.fecha)}: ${formatPeso(v.precio)}\n`);
-  if (abonos.length) { msg += `\nAbonos:\n`; abonos.forEach(a => msg += `  ${formatFechaCorta(a.fecha)}: ${formatPeso(a.monto)}\n`); }
-  alert(msg);
+// ─── RENDER CILINDROS ─────────────────────────────────────────────────
+function renderCilindros() {
+  const container = document.getElementById('lista-cilindros');
+  const prestados = calcCilindrosPrestados();
+
+  if (!prestados.length) {
+    container.innerHTML = emptyHTML('✅','No hay cilindros prestados pendientes');
+    return;
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-title"><div class="card-title-icon">🔵</div>Cilindros prestados</div>
+    <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">
+      Estas personas tienen cilindros pendientes de devolver.
+    </p>`;
+
+  prestados.forEach(c => {
+    const cid = getClienteId(c.nombre);
+    const item = document.createElement('div');
+    item.className = 'deuda-item';
+    item.innerHTML = `
+      <div class="deuda-top">
+        <div class="deuda-nombre">${esc(c.nombre)}</div>
+        <div class="deuda-saldo cilindro">${c.cantidad} cilindro${c.cantidad>1?'s':''}</div>
+      </div>
+      <div class="deuda-detail">Pendiente${c.cantidad>1?'s':''} de devolución</div>
+      <div class="deuda-actions">
+        <button class="btn-sm btn-blue" id="btn-dev-${cid}">✓ Devolvió cilindro</button>
+      </div>`;
+    item.querySelector('#btn-dev-' + cid).addEventListener('click', () => pedirDevolucion(cid));
+    card.appendChild(item);
+  });
+
+  container.innerHTML = '';
+  container.appendChild(card);
 }
 
 // ─── RENDER RESUMEN ───────────────────────────────────────────────────
 function renderResumen() {
-  const ventas = filtrarPorPeriodo(cache.ventas, periodoResumen);
-  const abonos = filtrarPorPeriodo(cache.abonos, periodoResumen);
-  const totalContado = ventas.filter(v => v.tipo === 'contado').reduce((s,v) => s+v.precio, 0);
-  const totalAbonos  = abonos.reduce((s,a) => s+a.monto, 0);
-  const saldoFiadoTotal = (() => {
-    const cl = {};
-    cache.ventas.filter(v => v.tipo==='fiado').forEach(v => { cl[v.cliente] = (cl[v.cliente]||0)+v.precio; });
-    cache.abonos.forEach(a => { cl[a.cliente] = (cl[a.cliente]||0)-a.monto; });
-    return Object.values(cl).filter(s=>s>0).reduce((a,b)=>a+b,0);
-  })();
-  const totalEntradas = cache.entradas.reduce((s,e)=>s+e.cantidad,0);
-  const inventario = totalEntradas - cache.ventas.length;
+  const ventas  = filtrar(cache.ventas,  periodoRes);
+  const abonos  = filtrar(cache.abonos,  periodoRes);
+  const inv     = calcInventario();
+  const recaudado = ventas
+    .filter(v => v.tipo==='contado' || v.tipo==='prestamo_pagado')
+    .reduce((s,v) => s+v.precio, 0)
+    + abonos.reduce((s,a) => s+a.monto, 0);
+  const deudaTotal = calcDeudas().reduce((s,c) => s+c.deuda, 0);
+  const prestamosCount = ventas
+    .filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado').length;
+
+  document.getElementById('inv-row').innerHTML = `
+    <div class="inv-box llenos">
+      <div class="inv-num">${inv.llenos}</div>
+      <div class="inv-label">🟢 Llenos</div>
+    </div>
+    <div class="inv-box vacios">
+      <div class="inv-num">${inv.vacios}</div>
+      <div class="inv-label">🔵 Vacíos</div>
+    </div>
+    <div class="inv-box prestados">
+      <div class="inv-num" style="color:var(--orange)">${inv.prestados}</div>
+      <div class="inv-label">🔄 Prestados</div>
+    </div>`;
 
   document.getElementById('stats-grid').innerHTML = `
     <div class="stat-card">
       <div class="stat-label">Cilindros vendidos</div>
       <div class="stat-value">${ventas.length}</div>
-      <div class="stat-sub">${ventas.filter(v=>v.tipo==='contado').length} contado · ${ventas.filter(v=>v.tipo==='fiado').length} fiado</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Inventario actual</div>
-      <div class="stat-value ${inventario < 0 ? 'orange' : ''}">${inventario}</div>
-      <div class="stat-sub">${totalEntradas} entradas · ${cache.ventas.length} salidas</div>
+      <div class="stat-sub">
+        ${ventas.filter(v=>v.tipo==='contado').length} cont ·
+        ${ventas.filter(v=>v.tipo==='fiado'||v.tipo==='prestamo_fiado').length} fiado ·
+        ${prestamosCount} prést
+      </div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Recaudado</div>
-      <div class="stat-value green">${formatPeso(totalContado + totalAbonos)}</div>
-      <div class="stat-sub">Contado + abonos del período</div>
+      <div class="stat-value green">${formatPeso(recaudado)}</div>
+      <div class="stat-sub">Contado + abonos</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Fiado pendiente</div>
-      <div class="stat-value orange">${formatPeso(saldoFiadoTotal)}</div>
-      <div class="stat-sub">Saldo histórico total</div>
+      <div class="stat-label">Deuda de plata</div>
+      <div class="stat-value orange">${formatPeso(deudaTotal)}</div>
+      <div class="stat-sub">Saldo histórico</div>
     </div>
-  `;
+    <div class="stat-card">
+      <div class="stat-label">Cilindros prestados</div>
+      <div class="stat-value blue">${inv.prestados}</div>
+      <div class="stat-sub">Sin devolver</div>
+    </div>`;
 }
 
-// ─── CONFIRM BORRAR ───────────────────────────────────────────────────
-window.confirmarBorrar = function() {
-  // Solo borra cache local, los datos en Firestore se mantienen
-  document.getElementById('confirmMsg').textContent = 'Se recargará la información desde la nube.';
-  pendingConfirmFn = async () => {
-    cerrarConfirm();
-    await cargarDatos();
-    renderMovimientos(); renderFiados(); renderResumen();
-    showToast('Datos recargados', 'success');
-  };
-  document.getElementById('confirmBtn').textContent = 'Recargar';
-  document.getElementById('confirmBtn').onclick = pendingConfirmFn;
-  document.getElementById('confirmOverlay').style.display = 'flex';
-}
-window.cerrarConfirm = function() {
-  document.getElementById('confirmOverlay').style.display = 'none';
+function renderAll() {
+  renderMovimientos();
+  renderDeudas();
+  renderCilindros();
+  renderResumen();
 }
 
 // ─── UTILS ────────────────────────────────────────────────────────────
-function formatNum(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
-function formatPeso(n) { return '$' + formatNum(n); }
-function formatFecha(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString('es-CO', { day:'2-digit', month:'short' }) + ' ' +
-    d.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
-}
-function formatFechaCorta(iso) {
-  return new Date(iso).toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'2-digit' });
-}
-let toastTimer;
-window.showToast = function(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
+function emptyHTML(icon, text) {
+  return `<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-text">${text}</div></div>`;
 }
 
-// Enter en login
-document.getElementById('passInput').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+// Escapa HTML para evitar XSS con nombres de clientes
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function formatNum(n) {
+  // Regex en lugar de toLocaleString — funciona igual en iOS y Android
+  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function formatPeso(n) { return '$' + formatNum(n); }
+
+function formatFecha(iso) {
+  // Evitar toLocaleString con opciones en iOS — parseo manual
+  const d = new Date(iso);
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const dia  = String(d.getDate()).padStart(2,'0');
+  const mes  = meses[d.getMonth()];
+  const h    = String(d.getHours()).padStart(2,'0');
+  const min  = String(d.getMinutes()).padStart(2,'0');
+  return `${dia} ${mes} ${h}:${min}`;
+}
+
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2800);
+}
+
+// ─── EVENT LISTENERS (sin onclick inline) ────────────────────────────
+document.getElementById('passInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('btnLogin').addEventListener('click', doLogin);
+document.getElementById('btnLogout').addEventListener('click', logout);
+document.getElementById('btnRegistrar').addEventListener('click', registrarVenta);
+document.getElementById('btnEntrada').addEventListener('click', registrarEntrada);
+document.getElementById('btnRecargar').addEventListener('click', async () => {
+  await cargarDatos(); renderAll(); showToast('Datos recargados','success');
+});
+document.getElementById('btnCancelar').addEventListener('click', cerrarConfirm);
+
+// Tabs — delegación de eventos
+document.getElementById('tabBar').addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (tab) showTab(tab.dataset.tab);
+});
+
+// Tipo de venta
+document.getElementById('btn-contado').addEventListener('click',  () => setTipo('contado'));
+document.getElementById('btn-fiado').addEventListener('click',    () => setTipo('fiado'));
+document.getElementById('btn-prestamo').addEventListener('click', () => setTipo('prestamo'));
+
+// Pago préstamo
+document.getElementById('btn-pp-si').addEventListener('click',  () => setPagoPrestamo(true));
+document.getElementById('btn-pp-no').addEventListener('click',  () => setPagoPrestamo(false));
+
+// Periodo movimientos
+document.getElementById('periodoMovTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.periodo-tab');
+  if (!btn) return;
+  periodoMov = btn.dataset.periodo;
+  document.querySelectorAll('#periodoMovTabs .periodo-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMovimientos();
+});
+
+// Periodo resumen
+document.getElementById('periodoResTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.periodo-tab');
+  if (!btn) return;
+  periodoRes = btn.dataset.periodo;
+  document.querySelectorAll('#periodoResTabs .periodo-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderResumen();
+});
 </script>
 </body>
 </html>
