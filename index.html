@@ -893,6 +893,9 @@ function calcInventario() {
   const normales   = cache.ventas.filter(v => v.tipo==='contado' || v.tipo==='fiado').length;
   const prestamos  = cache.ventas.filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado').length;
   const devueltos  = cache.devoluciones.length;
+  // Llenos: recibidos del proveedor - todas las salidas
+  // Vacíos: ventas normales (dejan vacío) + devoluciones de préstamos (devuelven vacío) - entregados al proveedor
+  // Prestados: préstamos activos sin devolver aún
   return {
     llenos:    Math.max(0, llenosRec - cache.ventas.length),
     vacios:    Math.max(0, normales + devueltos - vaciosEnt),
