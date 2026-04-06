@@ -11,451 +11,220 @@
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap');
 
   :root {
-    --navy: #1a2744;
-    --navy-light: #243460;
-    --orange: #d94f1e;
-    --orange-light: #f05a22;
-    --cream: #f5f3ef;
-    --white: #ffffff;
-    --gray: #8892a4;
-    --gray-light: #eef0f5;
-    --green: #1a8c5b;
-    --green-light: #e8f7f1;
-    --red: #c0392b;
-    --blue: #1a5fa8;
-    --blue-light: #e8f0ff;
+    --navy: #1a2744; --navy-light: #243460;
+    --orange: #d94f1e; --orange-light: #f05a22;
+    --cream: #f5f3ef; --white: #ffffff;
+    --gray: #8892a4; --gray-light: #eef0f5;
+    --green: #1a8c5b; --green-light: #e8f7f1;
+    --red: #c0392b; --blue: #1a5fa8; --blue-light: #e8f0ff;
     --shadow: 0 2px 12px rgba(26,39,68,0.10);
     --shadow-lg: 0 8px 32px rgba(26,39,68,0.16);
-    /* Safe area para notch iPhone */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* ── RESET & BASE ─────────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { height: 100%; }
-
   body {
-    font-family: 'Barlow', sans-serif;
-    background: var(--cream);
-    color: var(--navy);
-    min-height: 100%;
-    min-height: 100dvh;
-    /* Evitar bounce scroll en iOS */
-    overscroll-behavior: none;
-    /* Quitar delay táctil en Android/iOS */
-    touch-action: manipulation;
-    /* Quitar highlight azul en tap */
-    -webkit-tap-highlight-color: transparent;
+    font-family: 'Barlow', sans-serif; background: var(--cream); color: var(--navy);
+    min-height: 100dvh; overscroll-behavior: none;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
-
-  /* Evitar zoom al hacer focus en inputs iOS */
   input, select, textarea { font-size: 16px !important; }
 
-  /* ── LOADING BAR ─────────────────────────────────────────────── */
+  /* LOADING */
   #loadingBar {
-    display: none;
-    position: fixed; top: 0; left: 0; right: 0;
-    height: 3px;
+    display: none; position: fixed; top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, var(--orange), var(--orange-light));
-    z-index: 9999;
-    animation: loadingAnim 1s infinite;
+    z-index: 9999; animation: loadAnim 1s infinite;
   }
-  @keyframes loadingAnim { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes loadAnim { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  /* ── HEADER ──────────────────────────────────────────────────── */
+  /* HEADER */
   header {
-    background: var(--navy);
-    padding: 0 16px;
-    padding-top: var(--safe-top);
+    background: var(--navy); padding: 0 16px; padding-top: var(--safe-top);
     display: flex; align-items: center; justify-content: space-between;
-    height: calc(56px + var(--safe-top));
-    position: sticky; top: 0; z-index: 100;
+    height: calc(56px + var(--safe-top)); position: sticky; top: 0; z-index: 100;
     box-shadow: var(--shadow-lg);
   }
   .header-brand { display: flex; align-items: center; gap: 10px; }
   .header-logo { width: 34px; height: 34px; flex-shrink: 0; }
-  .header-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px; font-weight: 800;
-    color: var(--white); letter-spacing: 0.5px;
-  }
+  .header-title { font-family: 'Barlow Condensed',sans-serif; font-size: 18px; font-weight: 800; color: var(--white); letter-spacing: 0.5px; }
   .header-title span { color: var(--orange); }
-  .logout-btn {
-    background: none; border: none;
-    color: rgba(255,255,255,0.55);
-    font-size: 13px; font-family: 'Barlow', sans-serif;
-    padding: 8px 10px; cursor: pointer;
-    min-height: 44px; /* Área táctil mínima */
-    display: flex; align-items: center;
-  }
+  .logout-btn { background: none; border: none; color: rgba(255,255,255,0.55); font-size: 13px; font-family: 'Barlow',sans-serif; padding: 8px 10px; cursor: pointer; min-height: 44px; display: flex; align-items: center; }
 
-  /* ── LOGIN ───────────────────────────────────────────────────── */
-  #loginScreen {
-    min-height: 100dvh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-    padding-top: calc(24px + var(--safe-top));
-    padding-bottom: calc(24px + var(--safe-bottom));
-    background: var(--navy);
-  }
-  .login-card {
-    background: var(--white); border-radius: 20px;
-    padding: 40px 28px; width: 100%; max-width: 360px;
-    box-shadow: var(--shadow-lg); text-align: center;
-  }
+  /* LOGIN */
+  #loginScreen { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px; padding-top: calc(24px + var(--safe-top)); padding-bottom: calc(24px + var(--safe-bottom)); background: var(--navy); }
+  .login-card { background: var(--white); border-radius: 20px; padding: 40px 28px; width: 100%; max-width: 360px; box-shadow: var(--shadow-lg); text-align: center; }
   .login-logo { width: 80px; margin: 0 auto 16px; display: block; }
-  .login-card h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 4px;
-  }
+  .login-card h1 { font-family: 'Barlow Condensed',sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
   .login-card h1 span { color: var(--orange); }
   .login-card p { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
-  .login-label {
-    font-size: 12px; font-weight: 600; color: var(--navy);
-    text-align: left; display: block; margin-bottom: 6px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .login-input {
-    width: 100%; padding: 13px 16px;
-    border: 2px solid var(--gray-light); border-radius: 10px;
-    font-family: 'Barlow', sans-serif; color: var(--navy);
-    outline: none; transition: border-color 0.2s; margin-bottom: 16px;
-    background: var(--white);
-    /* iOS: evitar auto-zoom (font-size ya es 16px por regla global) */
-    -webkit-appearance: none;
-  }
+  .login-label { font-size: 12px; font-weight: 600; color: var(--navy); text-align: left; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .login-input { width: 100%; padding: 13px 16px; border: 2px solid var(--gray-light); border-radius: 10px; font-family: 'Barlow',sans-serif; color: var(--navy); outline: none; transition: border-color 0.2s; margin-bottom: 16px; background: var(--white); -webkit-appearance: none; }
   .login-input:focus { border-color: var(--orange); }
   .login-error { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; }
-  .btn-primary {
-    width: 100%; background: var(--orange); color: white;
-    border: none; border-radius: 10px; padding: 14px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px; font-weight: 700; letter-spacing: 0.5px;
-    cursor: pointer; transition: background 0.15s, transform 0.1s;
-    min-height: 48px;
-  }
+
+  /* BUTTONS */
+  .btn-primary { width: 100%; background: var(--orange); color: white; border: none; border-radius: 10px; padding: 14px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; min-height: 48px; }
   .btn-primary:active { transform: scale(0.98); background: var(--orange-light); }
-
-  /* ── APP ─────────────────────────────────────────────────────── */
-  #app { display: none; }
-
-  /* ── TABS ────────────────────────────────────────────────────── */
-  .tabs {
-    display: flex;
-    background: var(--white);
-    border-bottom: 2px solid var(--gray-light);
-    position: sticky;
-    top: calc(56px + var(--safe-top));
-    z-index: 90;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex: 1; min-width: 72px;
-    padding: 12px 5px 10px;
-    border: none; background: none;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px; font-weight: 700; color: var(--gray);
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-    text-transform: uppercase; white-space: nowrap;
-    min-height: 44px; /* Área táctil mínima iOS */
-  }
-  .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
-
-  /* ── CONTENT ─────────────────────────────────────────────────── */
-  .content {
-    padding: 14px;
-    padding-bottom: calc(24px + var(--safe-bottom));
-    max-width: 600px; margin: 0 auto;
-  }
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* ── CARDS ───────────────────────────────────────────────────── */
-  .card {
-    background: var(--white); border-radius: 14px;
-    padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow);
-  }
-  .card-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px; font-weight: 700; color: var(--navy);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-  }
-  .card-title-icon {
-    width: 26px; height: 26px; border-radius: 7px;
-    background: var(--navy);
-    display: flex; align-items: center; justify-content: center; font-size: 13px;
-    flex-shrink: 0;
-  }
-
-  /* ── FORM ────────────────────────────────────────────────────── */
-  .field-label {
-    font-size: 11px; font-weight: 600; color: var(--gray);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    margin-bottom: 5px; display: block;
-  }
-  .field-input, .field-select {
-    width: 100%; padding: 13px 14px;
-    border: 2px solid var(--gray-light); border-radius: 10px;
-    font-family: 'Barlow', sans-serif; color: var(--navy);
-    outline: none; transition: border-color 0.2s;
-    background: var(--white); margin-bottom: 11px;
-    -webkit-appearance: none; appearance: none;
-  }
-  .field-input:focus, .field-select:focus { border-color: var(--orange); }
-
-  /* ── TIPO TOGGLE ─────────────────────────────────────────────── */
-  .tipo-toggle {
-    display: flex; background: var(--gray-light);
-    border-radius: 10px; padding: 3px; margin-bottom: 12px; gap: 2px;
-  }
-  .tipo-toggle button {
-    flex: 1; padding: 10px 4px;
-    border: none; border-radius: 8px; background: none;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px; font-weight: 700; color: var(--gray);
-    cursor: pointer; transition: all 0.2s; line-height: 1.3;
-    min-height: 52px;
-  }
-  .tipo-toggle button.t-contado { background: var(--green); color: white; }
-  .tipo-toggle button.t-fiado   { background: var(--orange); color: white; }
-  .tipo-toggle button.t-prestamo{ background: var(--blue); color: white; }
-
-  /* ── PRECIO DISPLAY ──────────────────────────────────────────── */
-  .precio-display {
-    background: var(--navy); color: white; border-radius: 10px;
-    padding: 12px 16px; display: flex;
-    justify-content: space-between; align-items: center; margin-bottom: 14px;
-  }
-  .precio-label { font-size: 12px; opacity: 0.6; }
-  .precio-valor {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px; font-weight: 800; color: var(--orange);
-  }
-
-  /* ── INFO BOX ────────────────────────────────────────────────── */
-  .info-box {
-    border-radius: 8px; padding: 10px 12px;
-    font-size: 12px; margin-bottom: 12px; line-height: 1.5; font-weight: 500;
-  }
-  .info-box.blue   { background: var(--blue-light);  color: var(--blue); }
-  .info-box.orange { background: #fff3ed; color: var(--orange); }
-  .info-box.green  { background: var(--green-light); color: var(--green); }
-
-  /* ── BUTTONS ─────────────────────────────────────────────────── */
-  .btn-block {
-    width: 100%; padding: 14px; border: none; border-radius: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px; font-weight: 700; letter-spacing: 0.5px;
-    cursor: pointer; transition: all 0.15s;
-    min-height: 48px;
-  }
+  .btn-block { width: 100%; padding: 14px; border: none; border-radius: 10px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; min-height: 48px; }
   .btn-block:active { transform: scale(0.98); opacity: 0.9; }
   .btn-orange { background: var(--orange); color: white; }
   .btn-navy   { background: var(--navy);   color: white; }
-  /* Botones pequeños — área táctil mínima 44px */
-  .btn-sm {
-    padding: 0 14px; border: none; border-radius: 7px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px; font-weight: 700;
-    cursor: pointer; transition: all 0.15s;
-    min-height: 36px; display: inline-flex; align-items: center;
-  }
+  .btn-green  { background: var(--green);  color: white; }
+  .btn-red    { background: var(--red);    color: white; }
+  .btn-blue   { background: var(--blue);   color: white; }
+  .btn-sm { padding: 0 14px; border: none; border-radius: 7px; font-family: 'Barlow Condensed',sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; min-height: 36px; display: inline-flex; align-items: center; }
   .btn-sm:active { opacity: 0.8; }
-  .btn-green { background: var(--green); color: white; }
-  .btn-red   { background: var(--red);   color: white; }
-  .btn-blue  { background: var(--blue);  color: white; }
-  /* Botón ✕ eliminar — área táctil ampliada */
-  .btn-del {
-    padding: 0 12px; border: none; border-radius: 7px;
-    background: var(--red); color: white;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px; font-weight: 700;
-    cursor: pointer; transition: opacity 0.15s;
-    min-height: 36px; min-width: 36px;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
+  .btn-del { padding: 0 12px; border: none; border-radius: 7px; background: var(--red); color: white; font-family: 'Barlow Condensed',sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; min-height: 36px; min-width: 36px; display: inline-flex; align-items: center; justify-content: center; }
   .btn-del:active { opacity: 0.7; }
+  .btn-cancel { background: var(--gray-light); color: var(--navy); }
 
-  /* ── PERIODO TABS ────────────────────────────────────────────── */
-  .periodo-tabs {
-    display: flex; background: var(--gray-light);
-    border-radius: 10px; padding: 3px; margin-bottom: 12px;
-  }
-  .periodo-tab {
-    flex: 1; padding: 9px; border: none; border-radius: 8px; background: none;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px; font-weight: 700; color: var(--gray);
-    cursor: pointer; transition: all 0.2s; text-transform: uppercase;
-    min-height: 38px;
-  }
+  /* APP */
+  #app { display: none; }
+
+  /* TABS */
+  .tabs { display: flex; background: var(--white); border-bottom: 2px solid var(--gray-light); position: sticky; top: calc(56px + var(--safe-top)); z-index: 90; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 1; min-width: 72px; padding: 12px 5px 10px; border: none; background: none; font-family: 'Barlow Condensed',sans-serif; font-size: 11px; font-weight: 700; color: var(--gray); cursor: pointer; border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s; text-transform: uppercase; white-space: nowrap; min-height: 44px; }
+  .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* CONTENT */
+  .content { padding: 14px; padding-bottom: calc(24px + var(--safe-bottom)); max-width: 600px; margin: 0 auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--white); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .card-title { font-family: 'Barlow Condensed',sans-serif; font-size: 15px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-title-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+
+  /* FORM */
+  .field-label { font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: block; }
+  .field-input, .field-select { width: 100%; padding: 13px 14px; border: 2px solid var(--gray-light); border-radius: 10px; font-family: 'Barlow',sans-serif; color: var(--navy); outline: none; transition: border-color 0.2s; background: var(--white); margin-bottom: 11px; -webkit-appearance: none; appearance: none; }
+  .field-input:focus, .field-select:focus { border-color: var(--orange); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* TIPO TOGGLE */
+  .tipo-toggle { display: flex; background: var(--gray-light); border-radius: 10px; padding: 3px; margin-bottom: 12px; gap: 2px; }
+  .tipo-toggle button { flex: 1; padding: 10px 4px; border: none; border-radius: 8px; background: none; font-family: 'Barlow Condensed',sans-serif; font-size: 12px; font-weight: 700; color: var(--gray); cursor: pointer; transition: all 0.2s; line-height: 1.3; min-height: 52px; }
+  .tipo-toggle button.t-contado  { background: var(--green);  color: white; }
+  .tipo-toggle button.t-fiado    { background: var(--orange); color: white; }
+  .tipo-toggle button.t-prestamo { background: var(--blue);   color: white; }
+
+  /* PRECIO */
+  .precio-display { background: var(--navy); color: white; border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .precio-label { font-size: 12px; opacity: 0.6; }
+  .precio-valor { font-family: 'Barlow Condensed',sans-serif; font-size: 22px; font-weight: 800; color: var(--orange); }
+
+  /* INFO BOX */
+  .info-box { border-radius: 8px; padding: 10px 12px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; font-weight: 500; }
+  .info-box.blue   { background: var(--blue-light);  color: var(--blue);   }
+  .info-box.orange { background: #fff3ed;             color: var(--orange); }
+  .info-box.green  { background: var(--green-light);  color: var(--green);  }
+
+  /* PERIODO TABS */
+  .periodo-tabs { display: flex; background: var(--gray-light); border-radius: 10px; padding: 3px; margin-bottom: 12px; }
+  .periodo-tab { flex: 1; padding: 9px; border: none; border-radius: 8px; background: none; font-family: 'Barlow Condensed',sans-serif; font-size: 12px; font-weight: 700; color: var(--gray); cursor: pointer; transition: all 0.2s; text-transform: uppercase; min-height: 38px; }
   .periodo-tab.active { background: var(--navy); color: white; }
 
-  /* ── STATS ───────────────────────────────────────────────────── */
-  .stats-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 12px;
-  }
-  .stat-card {
-    background: var(--white); border-radius: 14px;
-    padding: 14px; box-shadow: var(--shadow); text-align: center;
-  }
-  .stat-label {
-    font-size: 10px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.5px;
-    color: var(--gray); margin-bottom: 5px;
-  }
-  .stat-value {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 24px; font-weight: 800; color: var(--navy); line-height: 1;
-  }
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .stat-card { background: var(--white); border-radius: 14px; padding: 14px; box-shadow: var(--shadow); text-align: center; }
+  .stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); margin-bottom: 5px; }
+  .stat-value { font-family: 'Barlow Condensed',sans-serif; font-size: 24px; font-weight: 800; color: var(--navy); line-height: 1; }
   .stat-value.orange { color: var(--orange); }
   .stat-value.green  { color: var(--green);  }
   .stat-value.blue   { color: var(--blue);   }
   .stat-sub { font-size: 10px; color: var(--gray); margin-top: 3px; }
 
-  /* ── INVENTARIO VISUAL ───────────────────────────────────────── */
+  /* INVENTARIO */
   .inv-row { display: flex; gap: 8px; margin-bottom: 12px; }
   .inv-box { flex: 1; border-radius: 12px; padding: 14px 8px; text-align: center; }
   .inv-box.llenos   { background: var(--green-light); border: 2px solid var(--green); }
   .inv-box.vacios   { background: var(--blue-light);  border: 2px solid var(--blue);  }
-  .inv-box.prestados{ background: #fff3ed; border: 2px solid var(--orange); }
-  .inv-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 32px; font-weight: 800; line-height: 1;
-  }
-  .inv-box.llenos   .inv-num { color: var(--green);  }
-  .inv-box.vacios   .inv-num { color: var(--blue);   }
-  .inv-box.prestados.inv-num { color: var(--orange); }
+  .inv-box.prestados{ background: #fff3ed;             border: 2px solid var(--orange);}
+  .inv-num { font-family: 'Barlow Condensed',sans-serif; font-size: 32px; font-weight: 800; line-height: 1; }
+  .inv-box.llenos    .inv-num { color: var(--green);  }
+  .inv-box.vacios    .inv-num { color: var(--blue);   }
   .inv-box.prestados .inv-num { color: var(--orange); }
-  .inv-label {
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.3px;
-    margin-top: 4px; color: var(--navy); opacity: 0.7;
-  }
+  .inv-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-top: 4px; color: var(--navy); opacity: 0.7; }
 
-  /* ── MOVIMIENTOS ─────────────────────────────────────────────── */
-  .mov-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 0; border-bottom: 1px solid var(--gray-light); gap: 8px;
-  }
+  /* DESGLOSE */
+  .desglose-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--gray-light); }
+  .desglose-row:last-child { border-bottom: none; }
+  .desglose-tam { font-weight: 700; font-size: 14px; color: var(--navy); min-width: 48px; }
+  .desglose-nums { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .desglose-num { font-family: 'Barlow Condensed',sans-serif; font-size: 13px; font-weight: 700; }
+  .desglose-num.ll { color: var(--green); }
+  .desglose-num.va { color: var(--blue); }
+  .desglose-num.pr { color: var(--orange); }
+
+  /* MOVIMIENTOS */
+  .mov-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-light); gap: 8px; }
   .mov-item:last-child { border-bottom: none; }
   .mov-left { flex: 1; min-width: 0; }
-  .mov-cliente {
-    font-weight: 600; font-size: 14px; color: var(--navy);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .mov-cliente { font-weight: 600; font-size: 14px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mov-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
   .mov-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-  .mov-valor {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px; font-weight: 700;
-  }
-  .mov-valor.contado        { color: var(--green);  }
-  .mov-valor.fiado          { color: var(--orange); }
-  .mov-valor.prestamo_pagado{ color: var(--blue);   }
-  .mov-valor.prestamo_fiado { color: var(--orange); }
-  .mov-valor.abono          { color: var(--green);  }
-  .mov-valor.devolucion     { color: var(--blue);   }
+  .mov-valor { font-family: 'Barlow Condensed',sans-serif; font-size: 15px; font-weight: 700; }
+  .mov-valor.contado         { color: var(--green);  }
+  .mov-valor.fiado           { color: var(--orange); }
+  .mov-valor.prestamo_pagado { color: var(--blue);   }
+  .mov-valor.prestamo_fiado  { color: var(--orange); }
+  .mov-valor.abono           { color: var(--green);  }
+  .mov-valor.devolucion      { color: var(--blue);   }
   .mov-badges { display: flex; gap: 5px; align-items: center; }
 
-  /* ── BADGES ──────────────────────────────────────────────────── */
-  .badge {
-    display: inline-block; padding: 2px 7px; border-radius: 20px;
-    font-size: 10px; font-weight: 700;
-    font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
-  }
-  .badge-contado   { background: var(--green-light); color: var(--green); }
-  .badge-fiado     { background: #fff3ed; color: var(--orange); }
-  .badge-prestamo  { background: var(--blue-light);  color: var(--blue);  }
-  .badge-abono     { background: #e8f0ff; color: var(--navy); }
-  .badge-devolucion{ background: var(--blue-light);  color: var(--blue);  }
+  /* BADGES */
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 700; font-family: 'Barlow Condensed',sans-serif; text-transform: uppercase; }
+  .badge-contado    { background: var(--green-light); color: var(--green);  }
+  .badge-fiado      { background: #fff3ed;             color: var(--orange); }
+  .badge-prestamo   { background: var(--blue-light);   color: var(--blue);   }
+  .badge-abono      { background: #e8f0ff;              color: var(--navy);   }
+  .badge-devolucion { background: var(--blue-light);   color: var(--blue);   }
+  .badge-ajuste     { background: var(--gray-light);   color: var(--gray);   }
 
-  /* ── DEUDAS / CILINDROS ──────────────────────────────────────── */
+  /* DEUDAS */
   .deuda-item { padding: 12px 0; border-bottom: 1px solid var(--gray-light); }
   .deuda-item:last-child { border-bottom: none; }
-  .deuda-top {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;
-  }
+  .deuda-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .deuda-nombre { font-weight: 600; font-size: 14px; flex: 1; min-width: 0; padding-right: 8px; }
-  .deuda-saldo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px; font-weight: 800; flex-shrink: 0;
-  }
-  .deuda-saldo.dinero  { color: var(--orange); }
-  .deuda-saldo.cilindro{ color: var(--blue);   }
+  .deuda-saldo { font-family: 'Barlow Condensed',sans-serif; font-size: 18px; font-weight: 800; flex-shrink: 0; }
+  .deuda-saldo.dinero   { color: var(--orange); }
+  .deuda-saldo.cilindro { color: var(--blue);   }
   .deuda-detail { font-size: 11px; color: var(--gray); margin-bottom: 8px; }
   .deuda-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-  /* ── FORM ABONO INLINE ───────────────────────────────────────── */
-  .abono-form {
-    background: var(--gray-light); border-radius: 8px;
-    padding: 10px; margin-top: 10px;
-    display: none; gap: 8px; align-items: center;
-  }
+  .abono-form { background: var(--gray-light); border-radius: 8px; padding: 10px; margin-top: 10px; display: none; gap: 8px; align-items: center; }
   .abono-form.open { display: flex; }
-  .abono-input {
-    flex: 1; padding: 10px 12px;
-    border: 2px solid var(--white); border-radius: 8px;
-    font-family: 'Barlow', sans-serif; color: var(--navy);
-    outline: none; background: white; min-width: 0;
-  }
+  .abono-input { flex: 1; padding: 10px 12px; border: 2px solid var(--white); border-radius: 8px; font-family: 'Barlow',sans-serif; color: var(--navy); outline: none; background: white; min-width: 0; }
   .abono-input:focus { border-color: var(--orange); }
 
-  /* ── EMPTY STATE ─────────────────────────────────────────────── */
+  /* AJUSTE INVENTARIO */
+  .ajuste-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .ajuste-tam-label { font-family: 'Barlow Condensed',sans-serif; font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 8px; grid-column: 1/-1; border-bottom: 1px solid var(--gray-light); padding-bottom: 6px; }
+  .ajuste-field { }
+  .ajuste-section { margin-bottom: 16px; }
+
+  /* EMPTY */
   .empty { text-align: center; padding: 40px 20px; color: var(--gray); }
   .empty-icon { font-size: 40px; margin-bottom: 10px; }
   .empty-text { font-size: 13px; }
 
-  /* ── TOAST ───────────────────────────────────────────────────── */
-  #toast {
-    position: fixed;
-    bottom: calc(24px + var(--safe-bottom));
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--navy); color: white;
-    padding: 12px 24px; border-radius: 30px;
-    font-size: 14px; font-weight: 600; font-family: 'Barlow', sans-serif;
-    box-shadow: var(--shadow-lg);
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    z-index: 9999; white-space: nowrap; max-width: 90vw;
-  }
+  /* TOAST */
+  #toast { position: fixed; bottom: calc(24px + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--navy); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; font-family: 'Barlow',sans-serif; box-shadow: var(--shadow-lg); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 9999; white-space: nowrap; max-width: 90vw; }
   #toast.show    { transform: translateX(-50%) translateY(0); }
   #toast.success { background: var(--green); }
   #toast.error   { background: var(--red);   }
 
-  /* ── CONFIRM OVERLAY ─────────────────────────────────────────── */
-  .confirm-overlay {
-    position: fixed; inset: 0;
-    background: rgba(26,39,68,0.65);
-    z-index: 500; display: flex;
-    align-items: center; justify-content: center; padding: 24px;
-  }
-  .confirm-box {
-    background: white; border-radius: 18px;
-    padding: 28px 22px; max-width: 320px; width: 100%; text-align: center;
-    box-shadow: var(--shadow-lg);
-  }
-  .confirm-box h3 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px;
-  }
+  /* CONFIRM */
+  .confirm-overlay { position: fixed; inset: 0; background: rgba(26,39,68,0.65); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .confirm-box { background: white; border-radius: 18px; padding: 28px 22px; max-width: 320px; width: 100%; text-align: center; box-shadow: var(--shadow-lg); }
+  .confirm-box h3 { font-family: 'Barlow Condensed',sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
   .confirm-box p { font-size: 13px; color: var(--gray); margin-bottom: 20px; line-height: 1.4; }
   .confirm-btns { display: flex; gap: 10px; }
-  .confirm-btns button {
-    flex: 1; padding: 13px; border: none; border-radius: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 15px; cursor: pointer;
-    min-height: 48px;
-  }
-  .btn-cancel { background: var(--gray-light); color: var(--navy); }
+  .confirm-btns button { flex: 1; padding: 13px; border: none; border-radius: 10px; font-family: 'Barlow Condensed',sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; min-height: 48px; }
 </style>
 </head>
 <body>
@@ -474,9 +243,8 @@
     <h1>FERRETERÍA <span>CRISTIAN</span></h1>
     <p>Control de Gas · Acceso administrativo</p>
     <label class="login-label">Contraseña</label>
-    <input type="password" id="passInput" class="login-input"
-      placeholder="••••••••" autocomplete="current-password"
-      autocorrect="off" autocapitalize="off" spellcheck="false">
+    <input type="password" id="passInput" class="login-input" placeholder="••••••••"
+      autocomplete="current-password" autocorrect="off" autocapitalize="off" spellcheck="false">
     <div class="login-error" id="loginError">Contraseña incorrecta</div>
     <button class="btn-primary" id="btnLogin">INGRESAR</button>
   </div>
@@ -509,25 +277,23 @@
 
   <div class="content">
 
-    <!-- REGISTRAR -->
+    <!-- ══ REGISTRAR ══ -->
     <div class="screen active" id="screen-registrar">
       <div class="card">
         <div class="card-title"><div class="card-title-icon">🔥</div>Nueva salida de gas</div>
 
         <label class="field-label">Tipo de operación</label>
         <div class="tipo-toggle">
-          <button id="btn-contado" class="t-contado" data-tipo="contado">✓ Contado<br><span style="font-size:10px;opacity:0.85">Paga + deja vacío</span></button>
-          <button id="btn-fiado" data-tipo="fiado">⏳ Fiado<br><span style="font-size:10px;opacity:0.85">No paga + deja vacío</span></button>
-          <button id="btn-prestamo" data-tipo="prestamo">🔄 Préstamo<br><span style="font-size:10px;opacity:0.85">Se lleva el cilindro</span></button>
+          <button id="btn-contado" class="t-contado">✓ Contado<br><span style="font-size:10px;opacity:0.85">Paga + deja vacío</span></button>
+          <button id="btn-fiado">⏳ Fiado<br><span style="font-size:10px;opacity:0.85">No paga + deja vacío</span></button>
+          <button id="btn-prestamo">🔄 Préstamo<br><span style="font-size:10px;opacity:0.85">Se lleva el cilindro</span></button>
         </div>
 
         <div id="info-tipo" class="info-box green">✓ El cliente paga y deja el cilindro vacío.</div>
 
         <label class="field-label">Cliente / Nombre</label>
-        <input type="text" id="reg-cliente" class="field-input"
-          placeholder="Nombre del cliente"
-          autocorrect="off" autocapitalize="words" spellcheck="false"
-          autocomplete="off">
+        <input type="text" id="reg-cliente" class="field-input" placeholder="Nombre del cliente"
+          autocorrect="off" autocapitalize="words" spellcheck="false" autocomplete="off">
 
         <label class="field-label">Tamaño del cilindro</label>
         <select id="sel-tamano" class="field-input">
@@ -545,8 +311,8 @@
         <div id="campo-pago-prestamo" style="display:none">
           <label class="field-label">¿Pagó el cilindro?</label>
           <div class="tipo-toggle">
-            <button id="btn-pp-si" class="t-contado" data-pago="true">✓ Sí pagó</button>
-            <button id="btn-pp-no" data-pago="false">✗ No pagó (queda fiado)</button>
+            <button id="btn-pp-si" class="t-contado">✓ Sí pagó</button>
+            <button id="btn-pp-no">✗ No pagó (queda fiado)</button>
           </div>
         </div>
 
@@ -554,7 +320,7 @@
       </div>
     </div>
 
-    <!-- MOVIMIENTOS -->
+    <!-- ══ MOVIMIENTOS ══ -->
     <div class="screen" id="screen-movimientos">
       <div class="periodo-tabs" id="periodoMovTabs">
         <button class="periodo-tab active" data-periodo="hoy">Hoy</button>
@@ -565,59 +331,69 @@
       <div id="lista-movimientos"></div>
     </div>
 
-    <!-- DEUDAS -->
+    <!-- ══ DEUDAS ══ -->
     <div class="screen" id="screen-deudas">
       <div id="lista-deudas"></div>
     </div>
 
-    <!-- CILINDROS -->
+    <!-- ══ CILINDROS PRESTADOS ══ -->
     <div class="screen" id="screen-cilindros">
       <div id="lista-cilindros"></div>
     </div>
 
-    <!-- RESUMEN -->
+    <!-- ══ RESUMEN ══ -->
     <div class="screen" id="screen-resumen">
       <div class="periodo-tabs" id="periodoResTabs">
         <button class="periodo-tab active" data-periodo="hoy">Hoy</button>
         <button class="periodo-tab" data-periodo="semana">Semana</button>
         <button class="periodo-tab" data-periodo="mes">Mes</button>
       </div>
+
+      <!-- Totales -->
       <div class="inv-row" id="inv-row"></div>
+
+      <!-- Desglose por tamaño -->
       <div class="card" style="padding:14px 16px;">
-        <div class="card-title" style="margin-bottom:8px;"><div class="card-title-icon">📦</div>Desglose por tamaño</div>
+        <div class="card-title" style="margin-bottom:10px;">
+          <div class="card-title-icon">📦</div>Desglose por tamaño
+          <button class="btn-sm btn-navy" id="btnAbrirAjuste" style="margin-left:auto;font-size:11px;">Ajustar</button>
+        </div>
         <div id="inv-desglose"></div>
       </div>
+
+      <!-- Stats -->
       <div class="stats-grid" id="stats-grid"></div>
 
+      <!-- Llegada proveedor -->
       <div class="card">
-        <div class="card-title"><div class="card-title-icon">📦</div>Llegada del proveedor</div>
-        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">
-          Registra los cilindros llenos que llegaron y los vacíos que entregaste.
-        </p>
-        <label class="field-label">Tamaño de cilindro</label>
+        <div class="card-title"><div class="card-title-icon">🚚</div>Llegada del proveedor</div>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Registra los cilindros que llegaron y los vacíos que entregaste.</p>
+        <label class="field-label">Tamaño</label>
         <select id="entrada-tamano" class="field-input">
           <option value="40" selected>40 lb</option>
           <option value="20">20 lb</option>
           <option value="33">33 lb</option>
           <option value="100">100 lb</option>
         </select>
-        <label class="field-label">Cilindros llenos recibidos</label>
-        <input type="number" id="entrada-llenos" class="field-input"
-          placeholder="Ej: 10" min="1" inputmode="numeric" pattern="[0-9]*">
-        <label class="field-label">Cilindros vacíos entregados al proveedor</label>
-        <input type="number" id="entrada-vacios" class="field-input"
-          placeholder="Ej: 8" min="0" inputmode="numeric" pattern="[0-9]*">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Llenos recibidos</label>
+            <input type="number" id="entrada-llenos" class="field-input" placeholder="0" min="1" inputmode="numeric" pattern="[0-9]*">
+          </div>
+          <div>
+            <label class="field-label">Vacíos entregados</label>
+            <input type="number" id="entrada-vacios" class="field-input" placeholder="0" min="0" inputmode="numeric" pattern="[0-9]*">
+          </div>
+        </div>
         <label class="field-label">Observación (opcional)</label>
-        <input type="text" id="entrada-obs" class="field-input"
-          placeholder="Factura, proveedor..." autocomplete="off">
+        <input type="text" id="entrada-obs" class="field-input" placeholder="Factura, proveedor..." autocomplete="off">
         <button class="btn-block btn-navy" id="btnEntrada">REGISTRAR ENTRADA</button>
       </div>
 
+      <!-- Recargar -->
       <div class="card">
         <div class="card-title"><div class="card-title-icon">🔄</div>Datos</div>
-        <button class="btn-block btn-navy" id="btnRecargar" style="font-size:14px;">
-          Recargar desde la nube
-        </button>
+        <button class="btn-block btn-navy" id="btnRecargar" style="font-size:14px;">Recargar desde la nube</button>
       </div>
     </div>
 
@@ -636,9 +412,24 @@
   </div>
 </div>
 
+<!-- AJUSTE INVENTARIO -->
+<div class="confirm-overlay" id="ajusteOverlay" style="display:none">
+  <div class="confirm-box" style="max-width:380px;">
+    <h3 style="margin-bottom:16px;">Ajustar inventario</h3>
+    <p style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.4;">
+      Ingresa el conteo físico actual. Este número es la base desde la que la app calcula.
+    </p>
+    <div id="ajuste-form"></div>
+    <div class="confirm-btns" style="margin-top:8px;">
+      <button class="btn-cancel" id="btnCancelarAjuste">Cancelar</button>
+      <button class="btn-orange" id="btnGuardarAjuste" style="flex:1;padding:13px;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;cursor:pointer;min-height:48px;">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, deleteDoc, doc }
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, deleteDoc, doc, setDoc, getDoc }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ─── CONFIG ───────────────────────────────────────────────────────────
@@ -653,24 +444,30 @@ const firebaseConfig = {
 const db = getFirestore(initializeApp(firebaseConfig));
 
 const PASSWORD = 'gas2024';
-const PRECIOS = {
-  '20':  { label: 'Cilindro 20 lb',  precio: 55000  },
-  '33':  { label: 'Cilindro 33 lb',  precio: 112000 },
-  '40':  { label: 'Cilindro 40 lb',  precio: 116000 },
-  '100': { label: 'Cilindro 100 lb', precio: 272000 }
+const TAMANOS  = ['20','33','40','100'];
+const PRECIOS  = {
+  '20':  { label:'Cilindro 20 lb',  precio:55000  },
+  '33':  { label:'Cilindro 33 lb',  precio:112000 },
+  '40':  { label:'Cilindro 40 lb',  precio:116000 },
+  '100': { label:'Cilindro 100 lb', precio:272000 }
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────
-let tipoVenta        = 'contado';
-let pagoPrestamo     = true;
-let tamanoActual     = '40';
-let periodoMov       = 'hoy';
-let periodoRes       = 'hoy';
-let cargando         = false;
+let tipoVenta    = 'contado';
+let pagoPrestamo = true;
+let tamanoActual = '40';
+let periodoMov   = 'hoy';
+let periodoRes   = 'hoy';
+let cargando     = false;
 let cache = { ventas:[], entradas:[], abonos:[], devoluciones:[] };
-
-// IDs de clientes mapeados para evitar bugs con nombres especiales
-let clienteMap = {}; // id → nombre
+// Inventario base editable — se carga de Firebase, con fallback
+let invBase = {
+  '20':{ llenos:0, vacios:0 }, '33':{ llenos:0, vacios:0 },
+  '40':{ llenos:0, vacios:0 }, '100':{ llenos:0, vacios:0 }
+};
+// Mapa de clientes para IDs seguros en DOM
+let clienteMap = {};
+let clienteIdCounter = 0;
 
 // ─── FIRESTORE ────────────────────────────────────────────────────────
 const toISO = ts => ts?.toDate?.()?.toISOString() ?? ts ?? new Date().toISOString();
@@ -679,20 +476,22 @@ const parseSnap = snap => snap.docs.map(d => ({ id:d.id, ...d.data(), fecha:toIS
 async function cargarDatos() {
   mostrarCargando(true);
   try {
-    const [v,e,a,d] = await Promise.all([
+    const [v,e,a,d,inv] = await Promise.all([
       getDocs(query(collection(db,'gas_ventas'),       orderBy('fecha','desc'))),
       getDocs(query(collection(db,'gas_entradas'),     orderBy('fecha','desc'))),
       getDocs(query(collection(db,'gas_abonos'),       orderBy('fecha','desc'))),
-      getDocs(query(collection(db,'gas_devoluciones'), orderBy('fecha','desc')))
+      getDocs(query(collection(db,'gas_devoluciones'), orderBy('fecha','desc'))),
+      getDoc(doc(db,'gas_config','inventario_base'))
     ]);
     cache.ventas       = parseSnap(v);
     cache.entradas     = parseSnap(e);
     cache.abonos       = parseSnap(a);
     cache.devoluciones = parseSnap(d);
-  } catch(err) {
-    showToast('Error cargando datos','error');
-    console.error(err);
-  }
+    if (inv.exists()) {
+      const data = inv.data();
+      TAMANOS.forEach(t => { if (data[t]) invBase[t] = data[t]; });
+    }
+  } catch(err) { showToast('Error cargando datos','error'); console.error(err); }
   mostrarCargando(false);
 }
 
@@ -703,6 +502,7 @@ function mostrarCargando(s) {
 
 // ─── LOGIN ────────────────────────────────────────────────────────────
 async function doLogin() {
+  if (cargando) return;
   const pass = document.getElementById('passInput').value;
   if (pass === PASSWORD) {
     document.getElementById('loginScreen').style.display = 'none';
@@ -721,7 +521,7 @@ function logout() {
   document.getElementById('passInput').value = '';
   document.getElementById('loginError').style.display = 'none';
   cache = { ventas:[], entradas:[], abonos:[], devoluciones:[] };
-  clienteMap = {};
+  clienteMap = {}; clienteIdCounter = 0;
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────
@@ -730,28 +530,28 @@ function showTab(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
   document.getElementById('screen-' + name).classList.add('active');
-  if (name === 'movimientos') renderMovimientos();
-  if (name === 'deudas')      renderDeudas();
-  if (name === 'cilindros')   renderCilindros();
-  if (name === 'resumen')     renderResumen();
+  if (name==='movimientos') renderMovimientos();
+  if (name==='deudas')      renderDeudas();
+  if (name==='cilindros')   renderCilindros();
+  if (name==='resumen')     renderResumen();
 }
 
 // ─── TIPO VENTA ───────────────────────────────────────────────────────
 function setTipo(tipo) {
   tipoVenta = tipo;
-  ['contado','fiado','prestamo'].forEach(t => {
-    document.getElementById('btn-' + t).className = t === tipo ? 't-' + t : '';
-  });
-  const info = document.getElementById('info-tipo');
+  ['contado','fiado','prestamo'].forEach(t =>
+    document.getElementById('btn-'+t).className = t===tipo ? 't-'+t : ''
+  );
   const cfg = {
     contado:  ['green',  '✓ El cliente paga y deja el cilindro vacío.'],
     fiado:    ['orange', '⏳ El cliente no paga ahora, pero deja el cilindro vacío.'],
     prestamo: ['blue',   '🔄 El cliente se lleva el cilindro lleno sin dejar el vacío. Debe devolver el cilindro.']
   };
+  const info = document.getElementById('info-tipo');
   info.className = 'info-box ' + cfg[tipo][0];
   info.textContent = cfg[tipo][1];
-  document.getElementById('campo-pago-prestamo').style.display = tipo === 'prestamo' ? 'block' : 'none';
-  if (tipo === 'prestamo') setPagoPrestamo(true);
+  document.getElementById('campo-pago-prestamo').style.display = tipo==='prestamo' ? 'block' : 'none';
+  if (tipo==='prestamo') setPagoPrestamo(true);
 }
 
 function setPagoPrestamo(pago) {
@@ -764,26 +564,17 @@ function setPagoPrestamo(pago) {
 async function registrarVenta() {
   if (cargando) return;
   const cliente = document.getElementById('reg-cliente').value.trim();
-  if (!cliente) { showToast('Ingresa el nombre del cliente', 'error'); return; }
-
-  const tipoDoc = tipoVenta === 'prestamo'
-    ? (pagoPrestamo ? 'prestamo_pagado' : 'prestamo_fiado')
-    : tipoVenta;
-
+  if (!cliente) { showToast('Ingresa el nombre del cliente','error'); return; }
+  const tipoDoc = tipoVenta==='prestamo' ? (pagoPrestamo ? 'prestamo_pagado':'prestamo_fiado') : tipoVenta;
+  const precio  = PRECIOS[tamanoActual].precio;
   mostrarCargando(true);
   try {
     const ref = await addDoc(collection(db,'gas_ventas'), {
-      cliente, precio: PRECIOS[tamanoActual].precio, tamano: tamanoActual, tipo: tipoDoc, fecha: serverTimestamp()
+      cliente, precio, tamano:tamanoActual, tipo:tipoDoc, fecha:serverTimestamp()
     });
-    const precio = PRECIOS[tamanoActual].precio;
-    cache.ventas.unshift({ id:ref.id, cliente, precio, tamano: tamanoActual, tipo:tipoDoc, fecha:new Date().toISOString() });
+    cache.ventas.unshift({ id:ref.id, cliente, precio, tamano:tamanoActual, tipo:tipoDoc, fecha:new Date().toISOString() });
     document.getElementById('reg-cliente').value = '';
-    const msgs = {
-      contado:         '✓ Venta registrada',
-      fiado:           '✓ Fiado registrado',
-      prestamo_pagado: '✓ Préstamo registrado (pagado)',
-      prestamo_fiado:  '✓ Préstamo registrado (fiado)'
-    };
+    const msgs = { contado:'✓ Venta registrada', fiado:'✓ Fiado registrado', prestamo_pagado:'✓ Préstamo registrado (pagado)', prestamo_fiado:'✓ Préstamo registrado (fiado)' };
     showToast(msgs[tipoDoc], 'success');
     renderAll();
   } catch(err) { showToast('Error al guardar','error'); console.error(err); }
@@ -793,15 +584,15 @@ async function registrarVenta() {
 // ─── REGISTRAR ENTRADA ────────────────────────────────────────────────
 async function registrarEntrada() {
   if (cargando) return;
-  const llenos = parseInt(document.getElementById('entrada-llenos').value) || 0;
-  const vacios = parseInt(document.getElementById('entrada-vacios').value) || 0;
-  const obs    = document.getElementById('entrada-obs').value.trim();
+  const llenos  = parseInt(document.getElementById('entrada-llenos').value) || 0;
+  const vacios  = parseInt(document.getElementById('entrada-vacios').value) || 0;
+  const obs     = document.getElementById('entrada-obs').value.trim();
+  const tamEnt  = document.getElementById('entrada-tamano').value;
   if (llenos < 1) { showToast('Ingresa cilindros llenos recibidos','error'); return; }
   mostrarCargando(true);
   try {
-    const tamEnt = document.getElementById('entrada-tamano').value;
-    const ref = await addDoc(collection(db,'gas_entradas'), { llenos, vacios, obs, tamano: tamEnt, fecha: serverTimestamp() });
-    cache.entradas.unshift({ id:ref.id, llenos, vacios, obs, tamano: tamEnt, fecha:new Date().toISOString() });
+    const ref = await addDoc(collection(db,'gas_entradas'), { llenos, vacios, obs, tamano:tamEnt, fecha:serverTimestamp() });
+    cache.entradas.unshift({ id:ref.id, llenos, vacios, obs, tamano:tamEnt, fecha:new Date().toISOString() });
     document.getElementById('entrada-llenos').value = '';
     document.getElementById('entrada-vacios').value = '';
     document.getElementById('entrada-obs').value    = '';
@@ -812,47 +603,55 @@ async function registrarEntrada() {
 }
 
 // ─── ABONO ────────────────────────────────────────────────────────────
-function toggleAbono(clienteId) {
-  const form  = document.getElementById('abono-form-' + clienteId);
-  const input = document.getElementById('abono-monto-' + clienteId);
+function toggleAbono(cid) {
+  const form  = document.getElementById('abono-form-'+cid);
+  const input = document.getElementById('abono-monto-'+cid);
   if (!form) return;
   const open = form.classList.toggle('open');
-  if (open && input) {
-    // Pequeño delay para que el DOM se renderice antes del focus
-    setTimeout(() => input.focus(), 80);
-  }
+  if (open && input) setTimeout(() => input.focus(), 80);
 }
 
-async function registrarAbono(clienteId, saldoActual) {
+async function registrarAbono(cid, saldoActual) {
   if (cargando) return;
-  const cliente = clienteMap[clienteId];
-  const input   = document.getElementById('abono-monto-' + clienteId);
+  const cliente = clienteMap[cid];
+  const input   = document.getElementById('abono-monto-'+cid);
   const monto   = parseInt(input?.value) || 0;
-  if (monto <= 0)         { showToast('Ingresa un valor válido','error'); return; }
-  if (monto > saldoActual){ showToast('El abono supera el saldo','error'); return; }
+  if (monto <= 0)          { showToast('Ingresa un valor válido','error'); return; }
+  if (monto > saldoActual) { showToast('El abono supera el saldo','error'); return; }
   mostrarCargando(true);
   try {
-    const ref = await addDoc(collection(db,'gas_abonos'), { cliente, monto, fecha: serverTimestamp() });
+    const ref = await addDoc(collection(db,'gas_abonos'), { cliente, monto, fecha:serverTimestamp() });
     cache.abonos.unshift({ id:ref.id, cliente, monto, fecha:new Date().toISOString() });
-    showToast('✓ Abono registrado', 'success');
+    if (input) input.value = '';
+    showToast('✓ Abono registrado','success');
     renderDeudas(); renderMovimientos(); renderResumen();
   } catch(err) { showToast('Error al guardar','error'); console.error(err); }
   mostrarCargando(false);
 }
 
 // ─── DEVOLUCIÓN ───────────────────────────────────────────────────────
-function pedirDevolucion(clienteId) {
-  const cliente = clienteMap[clienteId];
+function pedirDevolucion(cid) {
+  const cliente = clienteMap[cid];
+  // Determinar tamaño del préstamo pendiente de ese cliente
+  // Ordenar préstamos de más antiguo a más reciente (cache está en desc)
+  const prestamosCliente = cache.ventas.filter(v =>
+    v.cliente===cliente && (v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado')
+  ).slice().reverse(); // ahora: [más antiguo, ..., más reciente]
+  const devueltosCliente = cache.devoluciones.filter(d => d.cliente===cliente).length;
+  // El siguiente pendiente es el más antiguo no devuelto aún
+  const pendiente = prestamosCliente[devueltosCliente];
+  const tamDev = pendiente?.tamano || '40';
+
   mostrarConfirm(
     '¿Registrar devolución?',
-    `${cliente} devuelve 1 cilindro vacío.`,
+    `${cliente} devuelve 1 cilindro vacío de ${tamDev} lb.`,
     'Confirmar', 'btn-blue',
     async () => {
       mostrarCargando(true);
       try {
-        const ref = await addDoc(collection(db,'gas_devoluciones'), { cliente, fecha: serverTimestamp() });
-        cache.devoluciones.unshift({ id:ref.id, cliente, fecha:new Date().toISOString() });
-        showToast(`✓ Cilindro devuelto por ${cliente}`, 'success');
+        const ref = await addDoc(collection(db,'gas_devoluciones'), { cliente, tamano:tamDev, fecha:serverTimestamp() });
+        cache.devoluciones.unshift({ id:ref.id, cliente, tamano:tamDev, fecha:new Date().toISOString() });
+        showToast(`✓ Cilindro devuelto por ${cliente}`,'success');
         renderAll();
       } catch(err) { showToast('Error al guardar','error'); console.error(err); }
       mostrarCargando(false);
@@ -870,118 +669,145 @@ function pedirEliminar(id, col, desc) {
       mostrarCargando(true);
       try {
         await deleteDoc(doc(db, col, id));
-        if (col === 'gas_ventas')       cache.ventas       = cache.ventas.filter(v => v.id !== id);
-        if (col === 'gas_abonos')       cache.abonos       = cache.abonos.filter(a => a.id !== id);
-        if (col === 'gas_devoluciones') cache.devoluciones = cache.devoluciones.filter(d => d.id !== id);
+        if (col==='gas_ventas')       cache.ventas       = cache.ventas.filter(v=>v.id!==id);
+        if (col==='gas_abonos')       cache.abonos       = cache.abonos.filter(a=>a.id!==id);
+        if (col==='gas_devoluciones') cache.devoluciones = cache.devoluciones.filter(d=>d.id!==id);
         renderAll();
-        showToast('Registro eliminado', 'success');
+        showToast('Registro eliminado','success');
       } catch(err) { showToast('Error al eliminar','error'); console.error(err); }
       mostrarCargando(false);
     }
   );
 }
 
-// ─── CONFIRM GENÉRICO ─────────────────────────────────────────────────
+// ─── AJUSTE DE INVENTARIO ─────────────────────────────────────────────
+function abrirAjuste() {
+  const form = document.getElementById('ajuste-form');
+  form.innerHTML = TAMANOS.map(t => `
+    <div class="ajuste-section">
+      <div class="ajuste-tam-label">Cilindro ${t} lb</div>
+      <div class="ajuste-grid">
+        <div class="ajuste-field">
+          <label class="field-label">🟢 Llenos</label>
+          <input type="number" class="field-input" id="aj-ll-${t}"
+            value="${invBase[t].llenos}" min="0" inputmode="numeric" pattern="[0-9]*" style="margin-bottom:0">
+        </div>
+        <div class="ajuste-field">
+          <label class="field-label">🔵 Vacíos</label>
+          <input type="number" class="field-input" id="aj-va-${t}"
+            value="${invBase[t].vacios}" min="0" inputmode="numeric" pattern="[0-9]*" style="margin-bottom:0">
+        </div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('ajusteOverlay').style.display = 'flex';
+}
+
+async function guardarAjuste() {
+  mostrarCargando(true);
+  try {
+    const nuevo = {};
+    TAMANOS.forEach(t => {
+      nuevo[t] = {
+        llenos: parseInt(document.getElementById('aj-ll-'+t).value) || 0,
+        vacios: parseInt(document.getElementById('aj-va-'+t).value) || 0
+      };
+    });
+    await setDoc(doc(db,'gas_config','inventario_base'), nuevo);
+    invBase = nuevo;
+    cerrarAjuste();
+    renderResumen();
+    showToast('✓ Inventario actualizado','success');
+  } catch(err) { showToast('Error al guardar','error'); console.error(err); }
+  mostrarCargando(false);
+}
+
+function cerrarAjuste() {
+  document.getElementById('ajusteOverlay').style.display = 'none';
+}
+
+// ─── CONFIRM ──────────────────────────────────────────────────────────
 function mostrarConfirm(titulo, msg, accion, btnClass, fn) {
   document.getElementById('confirmTitle').textContent = titulo;
   document.getElementById('confirmMsg').textContent   = msg;
   const btn = document.getElementById('confirmBtn');
-  btn.textContent = accion;
-  btn.className   = btnClass;
+  btn.textContent = accion; btn.className = btnClass;
   btn.onclick = () => { cerrarConfirm(); fn(); };
   document.getElementById('confirmOverlay').style.display = 'flex';
 }
-function cerrarConfirm() {
-  document.getElementById('confirmOverlay').style.display = 'none';
-}
+function cerrarConfirm() { document.getElementById('confirmOverlay').style.display = 'none'; }
 
 // ─── FILTROS ──────────────────────────────────────────────────────────
 function filtrar(items, periodo) {
   const ahora = new Date();
   return items.filter(item => {
     const f = new Date(item.fecha);
-    if (periodo === 'hoy')    return f.toDateString() === ahora.toDateString();
-    if (periodo === 'semana') {
+    if (periodo==='hoy')    return f.toDateString()===ahora.toDateString();
+    if (periodo==='semana') {
       const lunes = new Date(ahora);
-      lunes.setDate(ahora.getDate() - ((ahora.getDay() + 6) % 7));
-      lunes.setHours(0,0,0,0);
-      return f >= lunes;
+      lunes.setDate(ahora.getDate()-((ahora.getDay()+6)%7));
+      lunes.setHours(0,0,0,0); return f>=lunes;
     }
-    if (periodo === 'mes')
-      return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear();
+    if (periodo==='mes') return f.getMonth()===ahora.getMonth()&&f.getFullYear()===ahora.getFullYear();
     return true;
   });
 }
 
 // ─── CÁLCULOS ─────────────────────────────────────────────────────────
-// ─── INVENTARIO INICIAL (conteo real al arrancar la app) ─────────────
-const INV_INICIAL = {
-  '20':  { llenos: 2, vacios: 2 },
-  '33':  { llenos: 11, vacios: 0 },
-  '40':  { llenos: 5, vacios: 8 },
-  '100': { llenos: 7, vacios: 0 }
-};
-const TAMANOS = ['20','33','40','100'];
-
 function calcInventario() {
-  // Por tamaño: llenos iniciales + llenos recibidos - ventas de ese tamaño + devoluciones de ese tamaño
-  // Vacíos por tamaño: vacíos iniciales + ventas normales de ese tamaño + devoluciones de ese tamaño - vacíos entregados al proveedor de ese tamaño
   const por = {};
   TAMANOS.forEach(t => {
-    const ini = INV_INICIAL[t] || { llenos:0, vacios:0 };
-    // entradas del proveedor de ese tamaño
-    const llenosRec = cache.entradas.filter(e => (e.tamano||'40') === t).reduce((s,e) => s+(e.llenos??e.cantidad??0), 0);
-    const vaciosEnt = cache.entradas.filter(e => (e.tamano||'40') === t).reduce((s,e) => s+(e.vacios??0), 0);
-    // ventas de ese tamaño
-    const ventasTam = cache.ventas.filter(v => (v.tamano||'40') === t);
+    const base      = invBase[t] || { llenos:0, vacios:0 };
+    const entTam    = cache.entradas.filter(e => (e.tamano||'40')===t);
+    const llenosRec = entTam.reduce((s,e) => s+(e.llenos??e.cantidad??0), 0);
+    const vaciosEnt = entTam.reduce((s,e) => s+(e.vacios??0), 0);
+    const ventasTam = cache.ventas.filter(v => (v.tamano||'40')===t);
     const normales  = ventasTam.filter(v => v.tipo==='contado'||v.tipo==='fiado').length;
     const prestamos = ventasTam.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').length;
-    // devoluciones de ese tamaño (guardadas con tamano en el futuro; por ahora sin filtro de tamaño en devoluciones)
-    const devueltos = cache.devoluciones.length > 0
-      ? cache.devoluciones.filter(d => !d.tamano || d.tamano === t).length
-      : 0;
+    // Devoluciones filtradas por tamaño (guardamos tamano desde ahora)
+    const devueltos = cache.devoluciones.filter(d => (d.tamano||'40')===t).length;
+    // Llenos: base + recibidos del proveedor - todas las salidas (la devolución NO suma llenos,
+    //         el cliente devuelve vacío, no lleno)
+    // Vacíos: base + ventas normales (cliente deja vacío) + devoluciones de préstamos
+    //         (cliente devuelve vacío) - vacíos entregados al proveedor
     por[t] = {
-      llenos:    Math.max(0, ini.llenos + llenosRec - ventasTam.length + devueltos),
-      vacios:    Math.max(0, ini.vacios + normales + devueltos - vaciosEnt),
+      llenos:    Math.max(0, base.llenos + llenosRec - ventasTam.length),
+      vacios:    Math.max(0, base.vacios + normales + devueltos - vaciosEnt),
       prestados: Math.max(0, prestamos - devueltos)
     };
   });
-  // Totales
-  const llenos    = TAMANOS.reduce((s,t) => s + por[t].llenos, 0);
-  const vacios    = TAMANOS.reduce((s,t) => s + por[t].vacios, 0);
-  const prestados = TAMANOS.reduce((s,t) => s + por[t].prestados, 0);
-  return { llenos, vacios, prestados, por };
+  return {
+    llenos:    TAMANOS.reduce((s,t)=>s+por[t].llenos,0),
+    vacios:    TAMANOS.reduce((s,t)=>s+por[t].vacios,0),
+    prestados: TAMANOS.reduce((s,t)=>s+por[t].prestados,0),
+    por
+  };
 }
 
 function calcDeudas() {
   const cl = {};
-  cache.ventas.filter(v => v.tipo==='fiado' || v.tipo==='prestamo_fiado').forEach(v => {
+  cache.ventas.filter(v => v.tipo==='fiado'||v.tipo==='prestamo_fiado').forEach(v => {
     if (!cl[v.cliente]) cl[v.cliente] = { deuda:0, cargas:0 };
     cl[v.cliente].deuda  += v.precio;
     cl[v.cliente].cargas += 1;
   });
   cache.abonos.forEach(a => { if (cl[a.cliente]) cl[a.cliente].deuda -= a.monto; });
-  return Object.entries(cl)
-    .filter(([,d]) => d.deuda > 0)
-    .map(([nombre, d]) => ({ nombre, ...d }));
+  return Object.entries(cl).filter(([,d])=>d.deuda>0).map(([nombre,d])=>({nombre,...d}));
 }
 
 function calcCilindrosPrestados() {
   const cl = {};
-  cache.ventas.filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado')
-    .forEach(v => { cl[v.cliente] = (cl[v.cliente] ?? 0) + 1; });
-  cache.devoluciones.forEach(d => { cl[d.cliente] = (cl[d.cliente] ?? 0) - 1; });
-  return Object.entries(cl)
-    .filter(([,n]) => n > 0)
-    .map(([nombre, cantidad]) => ({ nombre, cantidad }));
+  cache.ventas.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado')
+    .forEach(v => { cl[v.cliente]=(cl[v.cliente]??0)+1; });
+  cache.devoluciones.forEach(d => { cl[d.cliente]=(cl[d.cliente]??0)-1; });
+  return Object.entries(cl).filter(([,n])=>n>0).map(([nombre,cantidad])=>({nombre,cantidad}));
 }
 
-// ─── HELPER: ID seguro para cliente ───────────────────────────────────
-let clienteIdCounter = 0;
+// ─── HELPER: ID seguro para cliente en DOM ────────────────────────────
 function getClienteId(nombre) {
-  const existing = Object.entries(clienteMap).find(([,n]) => n === nombre);
+  const existing = Object.entries(clienteMap).find(([,n])=>n===nombre);
   if (existing) return existing[0];
-  const id = 'c' + (++clienteIdCounter);
+  const id = 'c'+(++clienteIdCounter);
   clienteMap[id] = nombre;
   return id;
 }
@@ -991,28 +817,23 @@ const BADGE = {
   contado:        ['badge-contado',  'CONTADO'],
   fiado:          ['badge-fiado',    'FIADO'],
   prestamo_pagado:['badge-prestamo', 'PRÉSTAMO'],
-  prestamo_fiado: ['badge-prestamo', 'PRÉSTAMO+FIADO'],
+  prestamo_fiado: ['badge-prestamo', 'PRÉST+FIADO'],
 };
 
 function renderMovimientos() {
   const container = document.getElementById('lista-movimientos');
   const ventas = filtrar(cache.ventas, periodoMov);
-  const abonos = filtrar(cache.abonos, periodoMov).map(a => ({...a, _t:'abono'}));
-  const devols = filtrar(cache.devoluciones, periodoMov).map(d => ({...d, _t:'devolucion'}));
-  const todos  = [...ventas, ...abonos, ...devols]
-    .sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+  const abonos = filtrar(cache.abonos, periodoMov).map(a=>({...a,_t:'abono'}));
+  const devols = filtrar(cache.devoluciones, periodoMov).map(d=>({...d,_t:'devolucion'}));
+  const todos  = [...ventas,...abonos,...devols].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
 
-  if (!todos.length) {
-    container.innerHTML = emptyHTML('📋','Sin movimientos en este período');
-    return;
-  }
+  if (!todos.length) { container.innerHTML = emptyHTML('📋','Sin movimientos en este período'); return; }
 
-  const fragment = document.createDocumentFragment();
+  const frag = document.createDocumentFragment();
   todos.forEach(m => {
     const div = document.createElement('div');
     div.className = 'mov-item';
-
-    if (m._t === 'abono') {
+    if (m._t==='abono') {
       div.innerHTML = `
         <div class="mov-left">
           <div class="mov-cliente">${esc(m.cliente)}</div>
@@ -1020,26 +841,22 @@ function renderMovimientos() {
         </div>
         <div class="mov-right">
           <div class="mov-valor abono">+${formatPeso(m.monto)}</div>
-          <div class="mov-badges">
-            <span class="badge badge-abono">ABONO</span>
-          </div>
+          <div class="mov-badges"><span class="badge badge-abono">ABONO</span></div>
         </div>`;
       div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_abonos',`Abono ${formatPeso(m.monto)} · ${m.cliente}`));
-    } else if (m._t === 'devolucion') {
+    } else if (m._t==='devolucion') {
       div.innerHTML = `
         <div class="mov-left">
           <div class="mov-cliente">${esc(m.cliente)}</div>
-          <div class="mov-meta">Devolución cilindro · ${formatFecha(m.fecha)}</div>
+          <div class="mov-meta">Devolución ${m.tamano||''}lb · ${formatFecha(m.fecha)}</div>
         </div>
         <div class="mov-right">
           <div class="mov-valor devolucion">+1 vacío</div>
-          <div class="mov-badges">
-            <span class="badge badge-devolucion">DEVOLUCIÓN</span>
-          </div>
+          <div class="mov-badges"><span class="badge badge-devolucion">DEVOLUCIÓN</span></div>
         </div>`;
       div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_devoluciones',`Devolución · ${m.cliente}`));
     } else {
-      const [badgeClass, badgeLabel] = BADGE[m.tipo] || ['badge-contado','?'];
+      const [bc,bl] = BADGE[m.tipo]||['badge-contado','?'];
       div.innerHTML = `
         <div class="mov-left">
           <div class="mov-cliente">${esc(m.cliente)}</div>
@@ -1047,53 +864,46 @@ function renderMovimientos() {
         </div>
         <div class="mov-right">
           <div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div>
-          <div class="mov-badges">
-            <span class="badge ${badgeClass}">${badgeLabel}</span>
-          </div>
+          <div class="mov-badges"><span class="badge ${bc}">${bl}</span></div>
         </div>`;
-      div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_ventas',`${badgeLabel} · ${m.cliente}`));
+      div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_ventas',`${bl} · ${m.cliente}`));
     }
-    fragment.appendChild(div);
+    frag.appendChild(div);
   });
-  container.innerHTML = '';
-  container.appendChild(fragment);
+  container.innerHTML=''; container.appendChild(frag);
 }
 
 function delBtn(id, col, desc) {
   const btn = document.createElement('button');
-  btn.className = 'btn-del';
-  btn.textContent = '✕';
-  btn.addEventListener('click', () => pedirEliminar(id, col, desc));
+  btn.className='btn-del'; btn.textContent='✕';
+  btn.addEventListener('click', ()=>pedirEliminar(id,col,desc));
   return btn;
 }
 
 // ─── RENDER DEUDAS ────────────────────────────────────────────────────
 function renderDeudas() {
+  // Reset mapa SOLO aquí, antes de renderCilindros que también lo usa
+  clienteMap={}; clienteIdCounter=0;
   const container = document.getElementById('lista-deudas');
-  clienteMap = {}; clienteIdCounter = 0; // reset mapa
   const deudas = calcDeudas();
-
-  if (!deudas.length) {
-    container.innerHTML = emptyHTML('✅','No hay deudas de plata pendientes');
-    return;
-  }
+  if (!deudas.length) { container.innerHTML=emptyHTML('✅','No hay deudas de plata pendientes'); return; }
 
   const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `<div class="card-title"><div class="card-title-icon">💳</div>Deudas de plata</div>`;
+  card.className='card';
+  card.innerHTML=`<div class="card-title"><div class="card-title-icon">💳</div>Deudas de plata</div>`;
 
   deudas.forEach(c => {
     const cid = getClienteId(c.nombre);
     const item = document.createElement('div');
-    item.className = 'deuda-item';
-    item.innerHTML = `
+    item.className='deuda-item';
+    item.innerHTML=`
       <div class="deuda-top">
         <div class="deuda-nombre">${esc(c.nombre)}</div>
         <div class="deuda-saldo dinero">${formatPeso(c.deuda)}</div>
       </div>
       <div class="deuda-detail">${c.cargas} carga(s) pendiente(s) de pago</div>
       <div class="deuda-actions">
-        <button class="btn-sm btn-green" id="btn-abono-${cid}">+ Abonar</button>
+        <button class="btn-sm btn-green" id="btn-ab-${cid}">+ Abonar</button>
       </div>
       <div class="abono-form" id="abono-form-${cid}">
         <input type="number" class="abono-input" id="abono-monto-${cid}"
@@ -1101,42 +911,30 @@ function renderDeudas() {
         <button class="btn-sm btn-orange" id="btn-ok-${cid}">OK</button>
       </div>`;
     card.appendChild(item);
-
-    // Event listeners sin onclick inline
-    item.querySelector('#btn-abono-' + cid).addEventListener('click', () => toggleAbono(cid));
-    item.querySelector('#btn-ok-' + cid).addEventListener('click', () => registrarAbono(cid, c.deuda));
-    item.querySelector('#abono-monto-' + cid).addEventListener('keydown', e => {
-      if (e.key === 'Enter') registrarAbono(cid, c.deuda);
-    });
+    item.querySelector('#btn-ab-'+cid).addEventListener('click',()=>toggleAbono(cid));
+    item.querySelector('#btn-ok-'+cid).addEventListener('click',()=>registrarAbono(cid,c.deuda));
+    item.querySelector('#abono-monto-'+cid).addEventListener('keydown',e=>{if(e.key==='Enter')registrarAbono(cid,c.deuda);});
   });
-
-  container.innerHTML = '';
-  container.appendChild(card);
+  container.innerHTML=''; container.appendChild(card);
 }
 
 // ─── RENDER CILINDROS ─────────────────────────────────────────────────
 function renderCilindros() {
   const container = document.getElementById('lista-cilindros');
   const prestados = calcCilindrosPrestados();
-
-  if (!prestados.length) {
-    container.innerHTML = emptyHTML('✅','No hay cilindros prestados pendientes');
-    return;
-  }
+  if (!prestados.length) { container.innerHTML=emptyHTML('✅','No hay cilindros prestados pendientes'); return; }
 
   const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `
+  card.className='card';
+  card.innerHTML=`
     <div class="card-title"><div class="card-title-icon">🔵</div>Cilindros prestados</div>
-    <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">
-      Estas personas tienen cilindros pendientes de devolver.
-    </p>`;
+    <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Estas personas tienen cilindros pendientes de devolver.</p>`;
 
   prestados.forEach(c => {
-    const cid = getClienteId(c.nombre);
+    const cid = getClienteId(c.nombre); // reutiliza mapa existente sin resetear
     const item = document.createElement('div');
-    item.className = 'deuda-item';
-    item.innerHTML = `
+    item.className='deuda-item';
+    item.innerHTML=`
       <div class="deuda-top">
         <div class="deuda-nombre">${esc(c.nombre)}</div>
         <div class="deuda-saldo cilindro">${c.cantidad} cilindro${c.cantidad>1?'s':''}</div>
@@ -1145,67 +943,48 @@ function renderCilindros() {
       <div class="deuda-actions">
         <button class="btn-sm btn-blue" id="btn-dev-${cid}">✓ Devolvió cilindro</button>
       </div>`;
-    item.querySelector('#btn-dev-' + cid).addEventListener('click', () => pedirDevolucion(cid));
+    item.querySelector('#btn-dev-'+cid).addEventListener('click',()=>pedirDevolucion(cid));
     card.appendChild(item);
   });
-
-  container.innerHTML = '';
-  container.appendChild(card);
+  container.innerHTML=''; container.appendChild(card);
 }
 
 // ─── RENDER RESUMEN ───────────────────────────────────────────────────
 function renderResumen() {
-  const ventas  = filtrar(cache.ventas,  periodoRes);
-  const abonos  = filtrar(cache.abonos,  periodoRes);
+  const ventas  = filtrar(cache.ventas, periodoRes);
+  const abonos  = filtrar(cache.abonos, periodoRes);
   const inv     = calcInventario();
-  const recaudado = ventas
-    .filter(v => v.tipo==='contado' || v.tipo==='prestamo_pagado')
-    .reduce((s,v) => s+v.precio, 0)
-    + abonos.reduce((s,a) => s+a.monto, 0);
-  const deudaTotal = calcDeudas().reduce((s,c) => s+c.deuda, 0);
-  const prestamosCount = ventas
-    .filter(v => v.tipo==='prestamo_pagado' || v.tipo==='prestamo_fiado').length;
+  const recaudado = ventas.filter(v=>v.tipo==='contado'||v.tipo==='prestamo_pagado').reduce((s,v)=>s+v.precio,0)
+    + abonos.reduce((s,a)=>s+a.monto,0);
+  const deudaTotal = calcDeudas().reduce((s,c)=>s+c.deuda,0);
+  const prestamosCount = ventas.filter(v=>v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').length;
 
   // Cajitas totales
-  document.getElementById('inv-row').innerHTML = `
-    <div class="inv-box llenos">
-      <div class="inv-num">${inv.llenos}</div>
-      <div class="inv-label">🟢 Llenos</div>
-    </div>
-    <div class="inv-box vacios">
-      <div class="inv-num">${inv.vacios}</div>
-      <div class="inv-label">🔵 Vacíos</div>
-    </div>
-    <div class="inv-box prestados">
-      <div class="inv-num" style="color:var(--orange)">${inv.prestados}</div>
-      <div class="inv-label">🔄 Prestados</div>
-    </div>`;
+  document.getElementById('inv-row').innerHTML=`
+    <div class="inv-box llenos"><div class="inv-num">${inv.llenos}</div><div class="inv-label">🟢 Llenos</div></div>
+    <div class="inv-box vacios"><div class="inv-num">${inv.vacios}</div><div class="inv-label">🔵 Vacíos</div></div>
+    <div class="inv-box prestados"><div class="inv-num">${inv.prestados}</div><div class="inv-label">🔄 Prestados</div></div>`;
 
   // Desglose por tamaño
-  const desglose = TAMANOS.map(t => {
+  document.getElementById('inv-desglose').innerHTML = TAMANOS.map(t => {
     const p = inv.por[t];
-    const etiquetas = { '20':'20 lb','33':'33 lb','40':'40 lb','100':'100 lb' };
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--gray-light);">
-      <span style="font-weight:600;font-size:14px;color:var(--navy);">${etiquetas[t]}</span>
-      <div style="display:flex;gap:12px;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--green);">🟢 ${p.llenos} llenos</span>
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--blue);">🔵 ${p.vacios} vacíos</span>
-        ${p.prestados > 0 ? `<span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--orange);">🔄 ${p.prestados}</span>` : ''}
+    const prestBadge = p.prestados>0 ? `<span class="desglose-num pr">🔄 ${p.prestados}</span>` : '';
+    return `<div class="desglose-row">
+      <span class="desglose-tam">${t} lb</span>
+      <div class="desglose-nums">
+        <span class="desglose-num ll">🟢 ${p.llenos}</span>
+        <span class="desglose-num va">🔵 ${p.vacios}</span>
+        ${prestBadge}
       </div>
     </div>`;
   }).join('');
 
-  document.getElementById('inv-desglose').innerHTML = desglose;
-
-  document.getElementById('stats-grid').innerHTML = `
+  // Stats
+  document.getElementById('stats-grid').innerHTML=`
     <div class="stat-card">
       <div class="stat-label">Cilindros vendidos</div>
       <div class="stat-value">${ventas.length}</div>
-      <div class="stat-sub">
-        ${ventas.filter(v=>v.tipo==='contado').length} cont ·
-        ${ventas.filter(v=>v.tipo==='fiado'||v.tipo==='prestamo_fiado').length} fiado ·
-        ${prestamosCount} prést
-      </div>
+      <div class="stat-sub">${ventas.filter(v=>v.tipo==='contado').length} cont · ${ventas.filter(v=>v.tipo==='fiado'||v.tipo==='prestamo_fiado').length} fiado · ${prestamosCount} prést</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Recaudado</div>
@@ -1225,106 +1004,74 @@ function renderResumen() {
 }
 
 function renderAll() {
-  renderMovimientos();
-  renderDeudas();
-  renderCilindros();
-  renderResumen();
+  // Reset mapa antes del ciclo completo
+  clienteMap={}; clienteIdCounter=0;
+  renderMovimientos(); renderDeudas(); renderCilindros(); renderResumen();
 }
 
 // ─── UTILS ────────────────────────────────────────────────────────────
-function emptyHTML(icon, text) {
+function emptyHTML(icon,text) {
   return `<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-text">${text}</div></div>`;
 }
-
-// Escapa HTML para evitar XSS con nombres de clientes
 function esc(str) {
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function formatNum(n) {
-  // Regex en lugar de toLocaleString — funciona igual en iOS y Android
-  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-function formatPeso(n) { return '$' + formatNum(n); }
-
+function formatNum(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function formatPeso(n) { return '$'+formatNum(n); }
 function formatFecha(iso) {
-  // Evitar toLocaleString con opciones en iOS — parseo manual
   const d = new Date(iso);
-  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  const dia  = String(d.getDate()).padStart(2,'0');
-  const mes  = meses[d.getMonth()];
-  const h    = String(d.getHours()).padStart(2,'0');
-  const min  = String(d.getMinutes()).padStart(2,'0');
-  return `${dia} ${mes} ${h}:${min}`;
+  const M = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${String(d.getDate()).padStart(2,'0')} ${M[d.getMonth()]} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
 let toastTimer;
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className   = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = ''; }, 2800);
+function showToast(msg,type='') {
+  const t=document.getElementById('toast'); t.textContent=msg; t.className='show '+type;
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{t.className='';},2800);
 }
 
-// ─── EVENT LISTENERS (sin onclick inline) ────────────────────────────
-document.getElementById('passInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
+// ─── EVENT LISTENERS ──────────────────────────────────────────────────
+document.getElementById('passInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('btnLogin').addEventListener('click', doLogin);
 document.getElementById('btnLogout').addEventListener('click', logout);
 document.getElementById('btnRegistrar').addEventListener('click', registrarVenta);
 document.getElementById('btnEntrada').addEventListener('click', registrarEntrada);
-document.getElementById('btnRecargar').addEventListener('click', async () => {
-  await cargarDatos(); renderAll(); showToast('Datos recargados','success');
-});
+document.getElementById('btnRecargar').addEventListener('click', async ()=>{ await cargarDatos(); renderAll(); showToast('Datos recargados','success'); });
 document.getElementById('btnCancelar').addEventListener('click', cerrarConfirm);
+document.getElementById('btnAbrirAjuste').addEventListener('click', abrirAjuste);
+document.getElementById('btnGuardarAjuste').addEventListener('click', guardarAjuste);
+document.getElementById('btnCancelarAjuste').addEventListener('click', cerrarAjuste);
 
-// Tabs — delegación de eventos
-document.getElementById('tabBar').addEventListener('click', e => {
-  const tab = e.target.closest('.tab');
-  if (tab) showTab(tab.dataset.tab);
+// Tabs
+document.getElementById('tabBar').addEventListener('click', e=>{
+  const tab=e.target.closest('.tab'); if(tab) showTab(tab.dataset.tab);
 });
-
-// Tipo de venta
-document.getElementById('btn-contado').addEventListener('click',  () => setTipo('contado'));
-document.getElementById('btn-fiado').addEventListener('click',    () => setTipo('fiado'));
-document.getElementById('btn-prestamo').addEventListener('click', () => setTipo('prestamo'));
-
+// Tipo venta
+document.getElementById('btn-contado').addEventListener('click',  ()=>setTipo('contado'));
+document.getElementById('btn-fiado').addEventListener('click',    ()=>setTipo('fiado'));
+document.getElementById('btn-prestamo').addEventListener('click', ()=>setTipo('prestamo'));
 // Pago préstamo
-document.getElementById('btn-pp-si').addEventListener('click',  () => setPagoPrestamo(true));
-document.getElementById('btn-pp-no').addEventListener('click',  () => setPagoPrestamo(false));
-
-// Selector de tamaño
+document.getElementById('btn-pp-si').addEventListener('click', ()=>setPagoPrestamo(true));
+document.getElementById('btn-pp-no').addEventListener('click', ()=>setPagoPrestamo(false));
+// Selector tamaño
 document.getElementById('sel-tamano').addEventListener('change', function() {
   tamanoActual = this.value;
   const p = PRECIOS[tamanoActual];
   document.getElementById('precio-label-txt').textContent = p.label;
-  document.getElementById('precio-valor-txt').textContent = '$' + formatNum(p.precio);
+  document.getElementById('precio-valor-txt').textContent = '$'+formatNum(p.precio);
 });
-
-// Periodo movimientos
-document.getElementById('periodoMovTabs').addEventListener('click', e => {
-  const btn = e.target.closest('.periodo-tab');
-  if (!btn) return;
-  periodoMov = btn.dataset.periodo;
-  document.querySelectorAll('#periodoMovTabs .periodo-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderMovimientos();
+// Periodos
+document.getElementById('periodoMovTabs').addEventListener('click', e=>{
+  const btn=e.target.closest('.periodo-tab'); if(!btn) return;
+  periodoMov=btn.dataset.periodo;
+  document.querySelectorAll('#periodoMovTabs .periodo-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active'); renderMovimientos();
 });
-
-// Periodo resumen
-document.getElementById('periodoResTabs').addEventListener('click', e => {
-  const btn = e.target.closest('.periodo-tab');
-  if (!btn) return;
-  periodoRes = btn.dataset.periodo;
-  document.querySelectorAll('#periodoResTabs .periodo-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderResumen();
+document.getElementById('periodoResTabs').addEventListener('click', e=>{
+  const btn=e.target.closest('.periodo-tab'); if(!btn) return;
+  periodoRes=btn.dataset.periodo;
+  document.querySelectorAll('#periodoResTabs .periodo-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active'); renderResumen();
 });
 </script>
 </body>
