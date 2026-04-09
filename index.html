@@ -469,6 +469,8 @@ let invBase = {
   '20':{ llenos:0, vacios:0 }, '33':{ llenos:0, vacios:0 },
   '40':{ llenos:0, vacios:0 }, '100':{ llenos:0, vacios:0 }
 };
+// Fecha del último ajuste — solo movimientos POSTERIORES a esta fecha afectan el inventario
+let fechaAjuste = new Date(0); // epoch: sin ajuste = todos los movimientos cuentan
 // Mapa de clientes para IDs seguros en DOM
 let clienteMap = {};
 let clienteIdCounter = 0;
@@ -494,6 +496,8 @@ async function cargarDatos() {
     if (inv.exists()) {
       const data = inv.data();
       TAMANOS.forEach(t => { if (data[t]) invBase[t] = data[t]; });
+      // Cargar fecha del ajuste para filtrar movimientos anteriores
+      if (data._fecha) fechaAjuste = data._fecha.toDate ? data._fecha.toDate() : new Date(data._fecha);
     }
   } catch(err) { showToast('Error cargando datos','error'); console.error(err); }
   mostrarCargando(false);
@@ -717,8 +721,10 @@ async function guardarAjuste() {
         vacios: parseInt(document.getElementById('aj-va-'+t).value) || 0
       };
     });
+    nuevo._fecha = serverTimestamp();
     await setDoc(doc(db,'gas_config','inventario_base'), nuevo);
     invBase = nuevo;
+    fechaAjuste = new Date(); // actualizar la fecha local inmediatamente
     cerrarAjuste();
     renderResumen();
     showToast('✓ Inventario actualizado','success');
@@ -758,22 +764,30 @@ function filtrar(items, periodo) {
 }
 
 // ─── CÁLCULOS ─────────────────────────────────────────────────────────
+function despuesDelAjuste(item) {
+  // Solo cuenta movimientos registrados DESPUÉS del último ajuste de inventario
+  return new Date(item.fecha) > fechaAjuste;
+}
+
 function calcInventario() {
   const por = {};
   TAMANOS.forEach(t => {
-    const base      = invBase[t] || { llenos:0, vacios:0 };
-    const entTam    = cache.entradas.filter(e => (e.tamano||'40')===t);
+    const base = invBase[t] || { llenos:0, vacios:0 };
+
+    // Solo entradas/ventas/devoluciones POSTERIORES al último ajuste
+    const entTam    = cache.entradas.filter(e => despuesDelAjuste(e) && (e.tamano||'40')===t);
     const llenosRec = entTam.reduce((s,e) => s+(e.llenos??e.cantidad??0), 0);
     const vaciosEnt = entTam.reduce((s,e) => s+(e.vacios??0), 0);
-    const ventasTam = cache.ventas.filter(v => (v.tamano||'40')===t);
+
+    const ventasTam = cache.ventas.filter(v => despuesDelAjuste(v) && (v.tamano||'40')===t);
     const normales  = ventasTam.filter(v => v.tipo==='contado'||v.tipo==='fiado').length;
     const prestamos = ventasTam.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').length;
-    // Devoluciones filtradas por tamaño (guardamos tamano desde ahora)
-    const devueltos = cache.devoluciones.filter(d => (d.tamano||'40')===t).length;
-    // Llenos: base + recibidos del proveedor - todas las salidas (la devolución NO suma llenos,
-    //         el cliente devuelve vacío, no lleno)
-    // Vacíos: base + ventas normales (cliente deja vacío) + devoluciones de préstamos
-    //         (cliente devuelve vacío) - vacíos entregados al proveedor
+
+    const devueltos = cache.devoluciones.filter(d => despuesDelAjuste(d) && (d.tamano||'40')===t).length;
+
+    // Llenos = base del ajuste + llenos recibidos del proveedor - todas las salidas
+    // Vacíos = base del ajuste + ventas normales (dejan vacío) + devoluciones - vacíos entregados al proveedor
+    // Prestados = préstamos activos sin devolver
     por[t] = {
       llenos:    Math.max(0, base.llenos + llenosRec - ventasTam.length),
       vacios:    Math.max(0, base.vacios + normales + devueltos - vaciosEnt),
