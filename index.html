@@ -68,7 +68,7 @@
   .login-error { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; }
 
   /* BUTTONS */
-  .btn-primary { width: 100%; background: var(--orange); color: white; border: none; border-radius: 10px; padding: 14px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; min-height: 48px; }
+  .btn-primary { width: 100%; background: var(--orange); color: white; border: none; border-radius: 10px; padding: 14px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: transform 0.15s, opacity 0.15s; min-height: 48px; }
   .btn-primary:active { transform: scale(0.98); background: var(--orange-light); }
   .btn-block { width: 100%; padding: 14px; border: none; border-radius: 10px; font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: transform 0.15s, opacity 0.15s; min-height: 48px; }
   .btn-block:active { transform: scale(0.98); opacity: 0.9; }
@@ -307,8 +307,18 @@
           <option value="100">Cilindro 100 lb — $294.000</option>
         </select>
 
+        <label class="field-label">Cantidad de cilindros</label>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;">
+          <button type="button" id="btn-cant-menos" style="width:44px;height:44px;border:2px solid var(--gray-light);border-radius:10px;background:var(--white);font-size:20px;font-weight:700;color:var(--navy);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">−</button>
+          <input type="number" id="reg-cantidad" class="field-input" value="1" min="1" max="20" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;margin-bottom:0;">
+          <button type="button" id="btn-cant-mas" style="width:44px;height:44px;border:2px solid var(--gray-light);border-radius:10px;background:var(--white);font-size:20px;font-weight:700;color:var(--navy);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">+</button>
+        </div>
+
         <div class="precio-display">
-          <div class="precio-label" id="precio-label-txt">Cilindro 40 lb</div>
+          <div>
+            <div class="precio-label" id="precio-label-txt">Cilindro 40 lb</div>
+            <div style="font-size:10px;opacity:0.5;margin-top:2px;" id="precio-unit-txt">$129.000 × 1</div>
+          </div>
           <div class="precio-valor" id="precio-valor-txt">$129.000</div>
         </div>
 
@@ -571,17 +581,22 @@ function setPagoPrestamo(pago) {
 // ─── REGISTRAR VENTA ──────────────────────────────────────────────────
 async function registrarVenta() {
   if (cargando) return;
-  const cliente = document.getElementById('reg-cliente').value.trim();
+  const cliente  = document.getElementById('reg-cliente').value.trim();
+  const cantidad = parseInt(document.getElementById('reg-cantidad').value) || 1;
   if (!cliente) { showToast('Ingresa el nombre del cliente','error'); return; }
-  const tipoDoc = tipoVenta==='prestamo' ? (pagoPrestamo ? 'prestamo_pagado':'prestamo_fiado') : tipoVenta;
-  const precio  = PRECIOS[tamanoActual].precio;
+  if (cantidad < 1) { showToast('La cantidad debe ser al menos 1','error'); return; }
+  const tipoDoc  = tipoVenta==='prestamo' ? (pagoPrestamo ? 'prestamo_pagado':'prestamo_fiado') : tipoVenta;
+  const precio   = PRECIOS[tamanoActual].precio;
+  const total    = precio * cantidad;
   mostrarCargando(true);
   try {
     const ref = await addDoc(collection(db,'gas_ventas'), {
-      cliente, precio, tamano:tamanoActual, tipo:tipoDoc, fecha:serverTimestamp()
+      cliente, precio: total, precioUnit: precio, cantidad, tamano:tamanoActual, tipo:tipoDoc, fecha:serverTimestamp()
     });
-    cache.ventas.unshift({ id:ref.id, cliente, precio, tamano:tamanoActual, tipo:tipoDoc, fecha:new Date().toISOString() });
+    cache.ventas.unshift({ id:ref.id, cliente, precio:total, precioUnit:precio, cantidad, tamano:tamanoActual, tipo:tipoDoc, fecha:new Date().toISOString() });
     document.getElementById('reg-cliente').value = '';
+    document.getElementById('reg-cantidad').value = '1';
+    actualizarPrecioDisplay();
     const msgs = { contado:'✓ Venta registrada', fiado:'✓ Fiado registrado', prestamo_pagado:'✓ Préstamo registrado (pagado)', prestamo_fiado:'✓ Préstamo registrado (fiado)' };
     showToast(msgs[tipoDoc], 'success');
     renderAll();
@@ -780,16 +795,17 @@ function calcInventario() {
     const vaciosEnt = entTam.reduce((s,e) => s+(e.vacios??0), 0);
 
     const ventasTam = cache.ventas.filter(v => despuesDelAjuste(v) && (v.tamano||'40')===t);
-    const normales  = ventasTam.filter(v => v.tipo==='contado'||v.tipo==='fiado').length;
-    const prestamos = ventasTam.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').length;
+    const normales  = ventasTam.filter(v => v.tipo==='contado'||v.tipo==='fiado').reduce((s,v)=>s+(v.cantidad||1),0);
+    const prestamos = ventasTam.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').reduce((s,v)=>s+(v.cantidad||1),0);
 
     const devueltos = cache.devoluciones.filter(d => despuesDelAjuste(d) && (d.tamano||'40')===t).length;
 
     // Llenos = base del ajuste + llenos recibidos del proveedor - todas las salidas
     // Vacíos = base del ajuste + ventas normales (dejan vacío) + devoluciones - vacíos entregados al proveedor
     // Prestados = préstamos activos sin devolver
+    const totalSalidas = ventasTam.reduce((s,v)=>s+(v.cantidad||1),0);
     por[t] = {
-      llenos:    Math.max(0, base.llenos + llenosRec - ventasTam.length),
+      llenos:    Math.max(0, base.llenos + llenosRec - totalSalidas),
       vacios:    Math.max(0, base.vacios + normales + devueltos - vaciosEnt),
       prestados: Math.max(0, prestamos - devueltos)
     };
@@ -806,8 +822,8 @@ function calcDeudas() {
   const cl = {};
   cache.ventas.filter(v => v.tipo==='fiado'||v.tipo==='prestamo_fiado').forEach(v => {
     if (!cl[v.cliente]) cl[v.cliente] = { deuda:0, cargas:0 };
-    cl[v.cliente].deuda  += v.precio;
-    cl[v.cliente].cargas += 1;
+    cl[v.cliente].deuda  += v.precio;               // precio ya es el total (precioUnit × cantidad)
+    cl[v.cliente].cargas += (v.cantidad||1);         // contar cilindros reales, no registros
   });
   cache.abonos.forEach(a => { if (cl[a.cliente]) cl[a.cliente].deuda -= a.monto; });
   return Object.entries(cl).filter(([,d])=>d.deuda>0).map(([nombre,d])=>({nombre,...d}));
@@ -816,8 +832,8 @@ function calcDeudas() {
 function calcCilindrosPrestados() {
   const cl = {};
   cache.ventas.filter(v => v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado')
-    .forEach(v => { cl[v.cliente]=(cl[v.cliente]??0)+1; });
-  cache.devoluciones.forEach(d => { cl[d.cliente]=(cl[d.cliente]??0)-1; });
+    .forEach(v => { cl[v.cliente]=(cl[v.cliente]??0)+(v.cantidad||1); }); // contar cilindros reales
+  cache.devoluciones.forEach(d => { cl[d.cliente]=(cl[d.cliente]??0)-1; }); // cada devolución es 1 cilindro
   return Object.entries(cl).filter(([,n])=>n>0).map(([nombre,cantidad])=>({nombre,cantidad}));
 }
 
@@ -875,10 +891,11 @@ function renderMovimientos() {
       div.querySelector('.mov-badges').appendChild(delBtn(m.id,'gas_devoluciones',`Devolución · ${m.cliente}`));
     } else {
       const [bc,bl] = BADGE[m.tipo]||['badge-contado','?'];
+      const cantLabel = m.cantidad > 1 ? ` × ${m.cantidad}` : '';
       div.innerHTML = `
         <div class="mov-left">
           <div class="mov-cliente">${esc(m.cliente)}</div>
-          <div class="mov-meta">Cilindro ${m.tamano||'40'}lb · ${formatFecha(m.fecha)}</div>
+          <div class="mov-meta">Cilindro ${m.tamano||'40'}lb${cantLabel} · ${formatFecha(m.fecha)}</div>
         </div>
         <div class="mov-right">
           <div class="mov-valor ${m.tipo}">${formatPeso(m.precio)}</div>
@@ -975,8 +992,6 @@ function renderResumen() {
   const recaudado = ventas.filter(v=>v.tipo==='contado'||v.tipo==='prestamo_pagado').reduce((s,v)=>s+v.precio,0)
     + abonos.reduce((s,a)=>s+a.monto,0);
   const deudaTotal = calcDeudas().reduce((s,c)=>s+c.deuda,0);
-  const prestamosCount = ventas.filter(v=>v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').length;
-
   // Cajitas totales
   document.getElementById('inv-row').innerHTML=`
     <div class="inv-box llenos"><div class="inv-num">${inv.llenos}</div><div class="inv-label">🟢 Llenos</div></div>
@@ -997,12 +1012,16 @@ function renderResumen() {
     </div>`;
   }).join('');
 
-  // Stats
+  // Stats — contar cilindros reales (no registros)
+  const totalCilindros  = ventas.reduce((s,v)=>s+(v.cantidad||1),0);
+  const totalContadoCil = ventas.filter(v=>v.tipo==='contado').reduce((s,v)=>s+(v.cantidad||1),0);
+  const totalFiadoCil   = ventas.filter(v=>v.tipo==='fiado'||v.tipo==='prestamo_fiado').reduce((s,v)=>s+(v.cantidad||1),0);
+  const totalPrestCil   = ventas.filter(v=>v.tipo==='prestamo_pagado'||v.tipo==='prestamo_fiado').reduce((s,v)=>s+(v.cantidad||1),0);
   document.getElementById('stats-grid').innerHTML=`
     <div class="stat-card">
-      <div class="stat-label">Cilindros vendidos</div>
-      <div class="stat-value">${ventas.length}</div>
-      <div class="stat-sub">${ventas.filter(v=>v.tipo==='contado').length} cont · ${ventas.filter(v=>v.tipo==='fiado'||v.tipo==='prestamo_fiado').length} fiado · ${prestamosCount} prést</div>
+      <div class="stat-label">Salidas de gas</div>
+      <div class="stat-value">${totalCilindros}</div>
+      <div class="stat-sub">${totalContadoCil} cont · ${totalFiadoCil} fiado · ${totalPrestCil} prést</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Recaudado</div>
@@ -1048,6 +1067,16 @@ function showToast(msg,type='') {
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>{t.className='';},2800);
 }
 
+// ─── DISPLAY PRECIO ──────────────────────────────────────────────────
+function actualizarPrecioDisplay() {
+  const p    = PRECIOS[tamanoActual];
+  const cant = parseInt(document.getElementById('reg-cantidad').value) || 1;
+  const total = p.precio * cant;
+  document.getElementById('precio-label-txt').textContent = p.label;
+  document.getElementById('precio-unit-txt').textContent  = '$'+formatNum(p.precio)+' × '+cant;
+  document.getElementById('precio-valor-txt').textContent = '$'+formatNum(total);
+}
+
 // ─── EVENT LISTENERS ──────────────────────────────────────────────────
 document.getElementById('passInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('btnLogin').addEventListener('click', doLogin);
@@ -1071,12 +1100,24 @@ document.getElementById('btn-prestamo').addEventListener('click', ()=>setTipo('p
 // Pago préstamo
 document.getElementById('btn-pp-si').addEventListener('click', ()=>setPagoPrestamo(true));
 document.getElementById('btn-pp-no').addEventListener('click', ()=>setPagoPrestamo(false));
-// Selector tamaño
+// Selector tamaño y cantidad
 document.getElementById('sel-tamano').addEventListener('change', function() {
   tamanoActual = this.value;
-  const p = PRECIOS[tamanoActual];
-  document.getElementById('precio-label-txt').textContent = p.label;
-  document.getElementById('precio-valor-txt').textContent = '$'+formatNum(p.precio);
+  actualizarPrecioDisplay();
+});
+
+document.getElementById('reg-cantidad').addEventListener('input', actualizarPrecioDisplay);
+
+document.getElementById('btn-cant-menos').addEventListener('click', () => {
+  const inp = document.getElementById('reg-cantidad');
+  const val = parseInt(inp.value) || 1;
+  if (val > 1) { inp.value = val - 1; actualizarPrecioDisplay(); }
+});
+
+document.getElementById('btn-cant-mas').addEventListener('click', () => {
+  const inp = document.getElementById('reg-cantidad');
+  const val = parseInt(inp.value) || 1;
+  if (val < 20) { inp.value = val + 1; actualizarPrecioDisplay(); }
 });
 // Periodos
 document.getElementById('periodoMovTabs').addEventListener('click', e=>{
